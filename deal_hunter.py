@@ -8,12 +8,13 @@ import json
 import requests
 from datetime import datetime, timezone
 import anthropic
+import os
 
 # ============================================================
 # CONFIG — REMPLACE CES VALEURS
 # ============================================================
-ANTHROPIC_API_KEY = "sk-ant-REMPLACE_PAR_TA_CLE"   # claude.ai → API Keys
-BREVO_API_KEY     = "xkeysib-REMPLACE_PAhR_TA_CLE"   # brevo.com → SMTP & API
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+BREVO_API_KEY     = os.environ.get("BREVO_API_KEY")
 BREVO_LIST_ID     = 3                                 # ID de ta liste Brevo
 TON_EMAIL           = "alaouisana0@gmail.com"           # Email pour test
 # ============================================================
