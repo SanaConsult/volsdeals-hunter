@@ -319,7 +319,13 @@ listIds: [BREVO_LIST_ID],
 updateEnabled: true
 })
 })
-.then(function(r){ return r.json().then(function(d){ return {status: r.status, data: d}; }); })
+.then(function(r){
+var status = r.status;
+if(status === 204) {
+return {status: 204, data: {}};
+}
+return r.json().then(function(d){ return {status: status, data: d}; });
+})
 .then(function(res){
 if(res.status === 201 || res.status === 204 || (res.data && res.data.id)) {
 envoyerBienvenue(email);
