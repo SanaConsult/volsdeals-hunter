@@ -20,16 +20,12 @@ TON_EMAIL         = "alaouisana0@gmail.com"
 USD_TO_CAD        = 1.37   # taux de conversion USD -> CAD
 # ============================================================
 
-# Sources RSS -- focus Canada/Quebec + sources internationales
 FEEDS = [
-    # --- Sources specifiques Canada / Quebec ---
     {"name": "Secret Flying Canada",  "url": "https://www.secretflying.com/posts/category/canada/feed/"},
     {"name": "Flytrippers",           "url": "https://flytrippers.com/feed/"},
     {"name": "Prince of Travel",      "url": "https://princeoftravel.com/feed/"},
     {"name": "Reddit r/airmiles",     "url": "https://www.reddit.com/r/airmiles/.rss"},
     {"name": "Reddit r/CanadaDeals",  "url": "https://www.reddit.com/r/CanadaDeals/.rss"},
-    {"name": "Reddit r/YULDeals",     "url": "https://www.reddit.com/r/montreal+travel+flightdeals/.rss"},
-    # --- Sources internationales (filtrees par Claude) ---
     {"name": "Secret Flying",         "url": "https://secretflying.com/feed/"},
     {"name": "The Flight Deal",       "url": "https://www.theflightdeal.com/feed/"},
     {"name": "Reddit r/flightdeals",  "url": "https://www.reddit.com/r/flightdeals/.rss"},
@@ -38,8 +34,6 @@ FEEDS = [
     {"name": "Holidaypiraten",        "url": "https://www.holidaypiraten.de/feed/"},
 ]
 
-# Seuils de prix par destination (en dollars canadiens aller-retour)
-# Seuils augmentes pour capturer plus de deals reels
 SEUILS = {
     "CMN": {"ville": "Casablanca",   "seuil": 700,  "normal": 880},
     "RAK": {"ville": "Marrakech",    "seuil": 720,  "normal": 900},
@@ -61,11 +55,9 @@ SEUILS = {
     "MEX": {"ville": "Mexico",       "seuil": 500,  "normal": 700},
     "CUN": {"ville": "Cancun",       "seuil": 450,  "normal": 650},
     "NRT": {"ville": "Tokyo",        "seuil": 900,  "normal": 1400},
+    "SIN": {"ville": "Singapore",    "seuil": 850,  "normal": 1300},
 }
 
-# ============================================================
-# ETAPE 1 -- SCRAPER TOUTES LES SOURCES RSS
-# ============================================================
 def scraper_sources():
     tous_les_deals = []
     for source in FEEDS:
@@ -85,24 +77,21 @@ def scraper_sources():
     print(f"\n  {len(tous_les_deals)} articles trouves au total\n")
     return tous_les_deals
 
-# ============================================================
-# ETAPE 2 -- ANALYSER AVEC CLAUDE AI
-# ============================================================
 def analyser_deal(deal, client):
-    est_canadienne = any(x in deal['source'] for x in [
-        "Canada", "Flytrippers", "Prince of Travel", "airmiles", "CanadaDeals", "YULDeals"
+    est_canadienne = any(x in deal["source"] for x in [
+        "Canada", "Flytrippers", "Prince of Travel", "airmiles", "CanadaDeals"
     ])
 
     prompt = f"""Tu es un expert en bons plans de vols pour les voyageurs de Montreal (YUL), Quebec, Canada.
 Analyse cet article et reponds en JSON.
 
-Source: {deal['source']}
-Titre: {deal['titre']}
-Contenu: {deal['contenu']}
+Source: {deal["source"]}
+Titre: {deal["titre"]}
+Contenu: {deal["contenu"]}
 Source canadienne: {est_canadienne}
 
 Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres:
-{{
+{
   "contient_deal": true,
   "adaptable_yul": true,
   "code_destination": "CMN",
@@ -117,17 +106,17 @@ Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres:
   "score_urgence": 9,
   "lien_reservation": "https://...",
   "raison_rejet": ""
-}}
+}
 
-Regles importantes:
-- contient_deal: true si l article parle d un vol avec un prix specifique mentionne (meme approximatif)
-- adaptable_yul: true si on peut voler depuis Montreal (YUL) vers cette destination -- directement, via Toronto (YYZ), New York (JFK/EWR), ou autre hub nord-americain
-- Pour les sources canadiennes (Secret Flying Canada, Flytrippers, Prince of Travel, Reddit Canada), sois TRES ouvert: si le titre mentionne un prix de vol, c est probablement un deal
-- code_destination: utilise CMN, CDG, LIS, BCN, FCO, ATH, AMS, IST, RAK, FEZ, AGA, FRA, MAD, NCE, MRS, DXB, BKK, MEX, CUN, NRT ou le code IATA le plus proche
-- Si le prix est en USD, mets devise=USD (on convertira)
+Regles IMPORTANTES:
+- contient_deal: true UNIQUEMENT si l article mentionne un prix de vol numerique precis (ex: 389$, 450 USD). Si pas de prix -> false
+- prix_deal: DOIT etre un entier positif (ex: 389). Si pas de prix precis -> mettre 0 et contient_deal=false
+- adaptable_yul: true si on peut voler depuis Montreal (YUL) vers cette destination directement ou via hub
+- code_destination: CMN, CDG, LIS, BCN, FCO, ATH, AMS, IST, RAK, FEZ, AGA, FRA, MAD, NCE, MRS, DXB, BKK, MEX, CUN, NRT, SIN
+- Si le prix est en USD, mets devise=USD
 - type_deal: erreur_tarifaire / promo_flash / routage_creatif / reduction_saison / miles_points
-- score_urgence: 1-10 (10 = erreur tarifaire qui expire dans l heure)
-- Si vraiment pas un deal de vol: contient_deal=false et raison_rejet explique"""
+- score_urgence: 1-10
+- Si pas un deal de vol avec prix: contient_deal=false et raison_rejet explique"""
 
     try:
         client_anthropic = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -137,47 +126,63 @@ Regles importantes:
             messages=[{"role": "user", "content": prompt}]
         )
         texte = response.content[0].text.strip()
+        # Nettoyer les blocs markdown si present
         if "```" in texte:
-            texte = texte.split("```")[1]
-            if texte.startswith("json"):
-                texte = texte[4:]
+            parties = texte.split("```")
+            for p in parties:
+                p2 = p.strip()
+                if p2.startswith("json"):
+                    p2 = p2[4:].strip()
+                if p2.startswith("{"):
+                    texte = p2
+                    break
         texte = texte.strip()
-        return json.loads(texte)
+        result = json.loads(texte)
+        # Validation: prix_deal doit etre un nombre > 0
+        prix = result.get("prix_deal", 0)
+        if not isinstance(prix, (int, float)) or prix <= 0:
+            result["contient_deal"] = False
+            result["raison_rejet"] = f"Prix invalide ou absent: {prix}"
+        return result
     except Exception as e:
         return {"contient_deal": False, "raison_rejet": f"Erreur analyse: {e}"}
 
-# ============================================================
-# ETAPE 3 -- CONVERTIR ET VERIFIER LE SEUIL DE PRIX
-# ============================================================
 def verifier_seuil(analyse):
-    code  = analyse.get("code_destination", "")
-    prix  = analyse.get("prix_deal", 9999)
+    code   = analyse.get("code_destination", "")
+    prix   = analyse.get("prix_deal", 0)
     devise = analyse.get("devise", "CAD")
 
-    # Conversion USD -> CAD si necessaire
+    try:
+        prix = float(prix)
+    except (TypeError, ValueError):
+        return (False, None)
+
+    if prix <= 0:
+        return (False, None)
+
     if devise == "USD":
         prix_cad = round(prix * USD_TO_CAD)
-        print(f"  Conversion: {prix} USD -> {prix_cad} CAD")
+        print(f"  Conversion: {prix:.0f} USD -> {prix_cad} CAD")
         analyse["prix_deal_cad"] = prix_cad
     else:
-        prix_cad = prix
+        prix_cad = int(prix)
         analyse["prix_deal_cad"] = prix_cad
 
     if code in SEUILS:
         seuil = SEUILS[code]["seuil"]
         return (prix_cad <= seuil, seuil)
 
-    # Destination inconnue: accepter si economie > 35%
     economie = analyse.get("economie_pct", 0)
+    try:
+        economie = float(economie)
+    except (TypeError, ValueError):
+        economie = 0
     if economie >= 35:
-        print(f"  Destination {code} inconnue mais economie {economie}% >= 35%, on accepte")
+        print(f"  Destination {code} inconnue mais economie {economie:.0f}% >= 35%, on accepte")
         return (True, None)
 
     return (False, None)
 
-# ============================================================
-# ETAPE 4 -- ENVOYER L ALERTE EMAIL VIA BREVO
-# ============================================================
 def envoyer_alerte(deal_info, liste_emails):
     ville  = deal_info.get("ville_destination", "")
     prix   = deal_info.get("prix_deal_cad", deal_info.get("prix_deal", ""))
@@ -187,6 +192,11 @@ def envoyer_alerte(deal_info, liste_emails):
     score  = deal_info.get("score_urgence", 5)
     norm   = deal_info.get("prix_normal_estime", "")
     pays   = deal_info.get("pays", "")
+
+    try:
+        score = int(score)
+    except (TypeError, ValueError):
+        score = 5
 
     if score >= 9:
         badge = "ERREUR TARIFAIRE -- Agis dans l heure !"
@@ -208,7 +218,7 @@ def envoyer_alerte(deal_info, liste_emails):
 <a href="{lien}" style="background:#ff6b00;color:#fff;padding:16px 40px;border-radius:8px;font-weight:700;font-size:16px;text-decoration:none;display:inline-block">Voir le deal &rarr;</a>
 </div>
 <hr style="border:none;border-top:1px solid #1e3050;margin:32px 0">
-<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec &bull; Pour se desabonner, repondez a cet email</p>
+<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec</p>
 </div>"""
 
     payload = {
@@ -227,9 +237,6 @@ def envoyer_alerte(deal_info, liste_emails):
     else:
         print(f"  Erreur envoi email: {r.status_code} {r.text}")
 
-# ============================================================
-# ETAPE 5 -- RECUPERER LES ABONNES BREVO
-# ============================================================
 def get_abonnes():
     emails = []
     offset = 0
@@ -249,9 +256,6 @@ def get_abonnes():
             break
     return emails
 
-# ============================================================
-# MAIN
-# ============================================================
 def main():
     print("=" * 55)
     print("  VolsDeals - Deal Hunter")
@@ -281,14 +285,16 @@ def main():
             print(f"  Prix {prix_cad}$ CAD -- au-dessus du seuil ({seuil}$), ignore")
             continue
 
-        print(f"  DEAL TROUVE ! YUL -> {analyse.get('ville_destination')} a {analyse.get('prix_deal_cad', analyse.get('prix_deal'))}$ CAD (-{analyse.get('economie_pct')}%)")
+        prix_affiche = analyse.get("prix_deal_cad", analyse.get("prix_deal", "?"))
+        print(f"  DEAL TROUVE ! YUL -> {analyse.get('ville_destination')} a {prix_affiche}$ CAD (-{analyse.get('economie_pct')}%)")
         deals_valides.append(analyse)
 
     print(f"\n{len(deals_valides)} deal(s) valide(s) trouve(s)\n")
 
     if deals_valides:
-        meilleur = max(deals_valides, key=lambda x: x.get("score_urgence", 0))
-        print(f"Meilleur deal : YUL -> {meilleur.get('ville_destination')} a {meilleur.get('prix_deal_cad', meilleur.get('prix_deal'))}$ CAD")
+        meilleur = max(deals_valides, key=lambda x: x.get("score_urgence", 0) or 0)
+        prix_affiche = meilleur.get("prix_deal_cad", meilleur.get("prix_deal"))
+        print(f"Meilleur deal : YUL -> {meilleur.get('ville_destination')} a {prix_affiche}$ CAD")
         abonnes = get_abonnes()
         if not abonnes:
             abonnes = [TON_EMAIL]
