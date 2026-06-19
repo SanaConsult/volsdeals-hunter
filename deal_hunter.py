@@ -10,15 +10,11 @@ from datetime import datetime, timezone
 import anthropic
 import os
 
-# ============================================================
-# CONFIG
-# ============================================================
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 BREVO_API_KEY     = os.environ.get("BREVO_API_KEY")
 BREVO_LIST_ID     = 3
 TON_EMAIL         = "alaouisana0@gmail.com"
-USD_TO_CAD        = 1.37   # taux de conversion USD -> CAD
-# ============================================================
+USD_TO_CAD        = 1.37
 
 FEEDS = [
     {"name": "Secret Flying Canada",  "url": "https://www.secretflying.com/posts/category/canada/feed/"},
@@ -81,43 +77,39 @@ def analyser_deal(deal, client):
     est_canadienne = any(x in deal["source"] for x in [
         "Canada", "Flytrippers", "Prince of Travel", "airmiles", "CanadaDeals"
     ])
-
-    prompt = f"""Tu es un expert en bons plans de vols pour les voyageurs de Montreal (YUL), Quebec, Canada.
-Analyse cet article et reponds en JSON.
-
-Source: {deal["source"]}
-Titre: {deal["titre"]}
-Contenu: {deal["contenu"]}
-Source canadienne: {est_canadienne}
-
-Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres:
-{
-  "contient_deal": true,
-  "adaptable_yul": true,
-  "code_destination": "CMN",
-  "ville_destination": "Casablanca",
-  "pays": "Maroc",
-  "prix_deal": 389,
-  "devise": "CAD",
-  "prix_normal_estime": 850,
-  "economie_pct": 54,
-  "type_deal": "erreur_tarifaire",
-  "duree_validite": "quelques heures",
-  "score_urgence": 9,
-  "lien_reservation": "https://...",
-  "raison_rejet": ""
-}
-
-Regles IMPORTANTES:
-- contient_deal: true UNIQUEMENT si l article mentionne un prix de vol numerique precis (ex: 389$, 450 USD). Si pas de prix -> false
-- prix_deal: DOIT etre un entier positif (ex: 389). Si pas de prix precis -> mettre 0 et contient_deal=false
-- adaptable_yul: true si on peut voler depuis Montreal (YUL) vers cette destination directement ou via hub
-- code_destination: CMN, CDG, LIS, BCN, FCO, ATH, AMS, IST, RAK, FEZ, AGA, FRA, MAD, NCE, MRS, DXB, BKK, MEX, CUN, NRT, SIN
-- Si le prix est en USD, mets devise=USD
-- type_deal: erreur_tarifaire / promo_flash / routage_creatif / reduction_saison / miles_points
-- score_urgence: 1-10
-- Si pas un deal de vol avec prix: contient_deal=false et raison_rejet explique"""
-
+    # Construire le prompt sans f-string pour eviter les conflits avec les accolades JSON
+    prompt = ("Tu es un expert en bons plans de vols pour les voyageurs de Montreal (YUL), Quebec, Canada.\n"
+              "Analyse cet article et reponds en JSON.\n\n"
+              "Source: " + deal["source"] + "\n"
+              "Titre: " + deal["titre"] + "\n"
+              "Contenu: " + deal["contenu"] + "\n"
+              "Source canadienne: " + str(est_canadienne) + "\n\n"
+              'Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres:\n'
+              '{\n'
+              '  "contient_deal": true,\n'
+              '  "adaptable_yul": true,\n'
+              '  "code_destination": "CMN",\n'
+              '  "ville_destination": "Casablanca",\n'
+              '  "pays": "Maroc",\n'
+              '  "prix_deal": 389,\n'
+              '  "devise": "CAD",\n'
+              '  "prix_normal_estime": 850,\n'
+              '  "economie_pct": 54,\n'
+              '  "type_deal": "erreur_tarifaire",\n'
+              '  "duree_validite": "quelques heures",\n'
+              '  "score_urgence": 9,\n'
+              '  "lien_reservation": "https://...",\n'
+              '  "raison_rejet": ""\n'
+              '}\n\n'
+              "Regles IMPORTANTES:\n"
+              "- contient_deal: true UNIQUEMENT si prix de vol numerique precis mentionne (ex: 389$, 450 USD). Sinon false\n"
+              "- prix_deal: entier positif (ex: 389). Si pas de prix precis -> 0 et contient_deal=false\n"
+              "- adaptable_yul: true si vol possible depuis Montreal (YUL) directement ou via hub\n"
+              "- code_destination: CMN, CDG, LIS, BCN, FCO, ATH, AMS, IST, RAK, FEZ, AGA, FRA, MAD, NCE, MRS, DXB, BKK, MEX, CUN, NRT, SIN\n"
+              "- Si prix en USD: mets devise=USD (on convertira en CAD)\n"
+              "- type_deal: erreur_tarifaire / promo_flash / routage_creatif / reduction_saison / miles_points\n"
+              "- score_urgence: 1-10\n"
+              "- Si pas un deal de vol avec prix: contient_deal=false et raison_rejet explique")
     try:
         client_anthropic = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         response = client_anthropic.messages.create(
@@ -126,7 +118,6 @@ Regles IMPORTANTES:
             messages=[{"role": "user", "content": prompt}]
         )
         texte = response.content[0].text.strip()
-        # Nettoyer les blocs markdown si present
         if "```" in texte:
             parties = texte.split("```")
             for p in parties:
@@ -138,28 +129,24 @@ Regles IMPORTANTES:
                     break
         texte = texte.strip()
         result = json.loads(texte)
-        # Validation: prix_deal doit etre un nombre > 0
         prix = result.get("prix_deal", 0)
         if not isinstance(prix, (int, float)) or prix <= 0:
             result["contient_deal"] = False
-            result["raison_rejet"] = f"Prix invalide ou absent: {prix}"
+            result["raison_rejet"] = "Prix invalide ou absent: " + str(prix)
         return result
     except Exception as e:
-        return {"contient_deal": False, "raison_rejet": f"Erreur analyse: {e}"}
+        return {"contient_deal": False, "raison_rejet": "Erreur analyse: " + str(e)}
 
 def verifier_seuil(analyse):
     code   = analyse.get("code_destination", "")
     prix   = analyse.get("prix_deal", 0)
     devise = analyse.get("devise", "CAD")
-
     try:
         prix = float(prix)
     except (TypeError, ValueError):
         return (False, None)
-
     if prix <= 0:
         return (False, None)
-
     if devise == "USD":
         prix_cad = round(prix * USD_TO_CAD)
         print(f"  Conversion: {prix:.0f} USD -> {prix_cad} CAD")
@@ -167,20 +154,16 @@ def verifier_seuil(analyse):
     else:
         prix_cad = int(prix)
         analyse["prix_deal_cad"] = prix_cad
-
     if code in SEUILS:
         seuil = SEUILS[code]["seuil"]
         return (prix_cad <= seuil, seuil)
-
-    economie = analyse.get("economie_pct", 0)
     try:
-        economie = float(economie)
+        economie = float(analyse.get("economie_pct", 0) or 0)
     except (TypeError, ValueError):
         economie = 0
     if economie >= 35:
         print(f"  Destination {code} inconnue mais economie {economie:.0f}% >= 35%, on accepte")
         return (True, None)
-
     return (False, None)
 
 def envoyer_alerte(deal_info, liste_emails):
@@ -189,38 +172,32 @@ def envoyer_alerte(deal_info, liste_emails):
     econ   = deal_info.get("economie_pct", "")
     lien   = deal_info.get("lien_reservation", "#")
     type_  = deal_info.get("type_deal", "promo")
-    score  = deal_info.get("score_urgence", 5)
     norm   = deal_info.get("prix_normal_estime", "")
     pays   = deal_info.get("pays", "")
-
     try:
-        score = int(score)
+        score = int(deal_info.get("score_urgence", 5) or 5)
     except (TypeError, ValueError):
         score = 5
-
     if score >= 9:
         badge = "ERREUR TARIFAIRE -- Agis dans l heure !"
     elif score >= 7:
         badge = "DEAL FLASH -- Expire dans quelques heures"
     else:
         badge = "DEAL DU JOUR"
-
     sujet = f"[VolsDeals] YUL -> {ville} a {prix}$ CAD (-{econ}%) -- {badge}"
-
-    html = f"""<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#070f1e;color:#fff;padding:40px 32px;border-radius:12px">
-<div style="text-align:center;margin-bottom:32px"><span style="font-size:22px;font-weight:900">VolsDeals</span><span style="color:#ff6b00">&#x25CF;</span></div>
-<div style="background:#ff6b00;color:#fff;text-align:center;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:24px">{badge}</div>
-<h1 style="font-size:32px;font-weight:900;margin:0 0 8px">YUL &rarr; {ville} ({pays})</h1>
-<div style="font-size:48px;font-weight:900;color:#ff6b00;margin:16px 0">{prix} $ CAD</div>
-<p style="color:#8a9ab5;font-size:15px;margin-bottom:8px">Prix normal : <s>{norm}$</s> &bull; Economie : <strong style="color:#ff6b00">-{econ}%</strong></p>
-<p style="color:#8a9ab5;font-size:14px;margin-bottom:32px">Type : {type_} &bull; Urgence : {score}/10</p>
-<div style="text-align:center;margin:32px 0">
-<a href="{lien}" style="background:#ff6b00;color:#fff;padding:16px 40px;border-radius:8px;font-weight:700;font-size:16px;text-decoration:none;display:inline-block">Voir le deal &rarr;</a>
-</div>
-<hr style="border:none;border-top:1px solid #1e3050;margin:32px 0">
-<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec</p>
-</div>"""
-
+    html = ('<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#070f1e;color:#fff;padding:40px 32px;border-radius:12px">'
+            '<div style="text-align:center;margin-bottom:32px"><span style="font-size:22px;font-weight:900">VolsDeals</span><span style="color:#ff6b00">&#x25CF;</span></div>'
+            f'<div style="background:#ff6b00;color:#fff;text-align:center;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:24px">{badge}</div>'
+            f'<h1 style="font-size:32px;font-weight:900;margin:0 0 8px">YUL &rarr; {ville} ({pays})</h1>'
+            f'<div style="font-size:48px;font-weight:900;color:#ff6b00;margin:16px 0">{prix} $ CAD</div>'
+            f'<p style="color:#8a9ab5;font-size:15px;margin-bottom:8px">Prix normal : <s>{norm}$</s> &bull; Economie : <strong style="color:#ff6b00">-{econ}%</strong></p>'
+            f'<p style="color:#8a9ab5;font-size:14px;margin-bottom:32px">Type : {type_} &bull; Urgence : {score}/10</p>'
+            '<div style="text-align:center;margin:32px 0">'
+            f'<a href="{lien}" style="background:#ff6b00;color:#fff;padding:16px 40px;border-radius:8px;font-weight:700;font-size:16px;text-decoration:none;display:inline-block">Voir le deal &rarr;</a>'
+            '</div>'
+            '<hr style="border:none;border-top:1px solid #1e3050;margin:32px 0">'
+            '<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec</p>'
+            '</div>')
     payload = {
         "sender":      {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
         "to":          [{"email": e} for e in liste_emails],
@@ -261,36 +238,28 @@ def main():
     print("  VolsDeals - Deal Hunter")
     print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 55)
-
     deals_bruts = scraper_sources()
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     deals_valides = []
-
     print("Analyse avec Claude AI...\n")
-
     for i, deal in enumerate(deals_bruts):
         print(f"[{i+1}/{len(deals_bruts)}] {deal['source']} -- {deal['titre'][:70]}...")
         analyse = analyser_deal(deal, client)
-
         if not analyse.get("contient_deal"):
             print(f"  Non pertinent: {analyse.get('raison_rejet', '')[:120]}")
             continue
         if not analyse.get("adaptable_yul"):
-            print(f"  Non adaptable depuis YUL: {analyse.get('raison_rejet', '')[:80]}")
+            print(f"  Non adaptable depuis YUL")
             continue
-
         ok, seuil = verifier_seuil(analyse)
         if not ok:
             prix_cad = analyse.get("prix_deal_cad", analyse.get("prix_deal", "?"))
             print(f"  Prix {prix_cad}$ CAD -- au-dessus du seuil ({seuil}$), ignore")
             continue
-
         prix_affiche = analyse.get("prix_deal_cad", analyse.get("prix_deal", "?"))
         print(f"  DEAL TROUVE ! YUL -> {analyse.get('ville_destination')} a {prix_affiche}$ CAD (-{analyse.get('economie_pct')}%)")
         deals_valides.append(analyse)
-
     print(f"\n{len(deals_valides)} deal(s) valide(s) trouve(s)\n")
-
     if deals_valides:
         meilleur = max(deals_valides, key=lambda x: x.get("score_urgence", 0) or 0)
         prix_affiche = meilleur.get("prix_deal_cad", meilleur.get("prix_deal"))
