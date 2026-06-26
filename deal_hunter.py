@@ -70,6 +70,8 @@ SEUILS = {
 "KRK": {"ville": "Cracovie", "seuil": 690, "normal": 860},
 "VNO": {"ville": "Vilnius", "seuil": 700, "normal": 880},
 "TLL": {"ville": "Tallinn", "seuil": 700, "normal": 880},
+"GOT": {"ville": "Goteborg", "seuil": 700, "normal": 900},
+"IAH": {"ville": "Houston", "seuil": 350, "normal": 550},
 # Afrique du Nord et Maroc
 "CMN": {"ville": "Casablanca", "seuil": 700, "normal": 880},
 "RAK": {"ville": "Marrakech", "seuil": 720, "normal": 900},
@@ -319,15 +321,15 @@ def mettre_a_jour_site(deals_valides):
     )
 
     # Remplacer le bloc deals-strip-section dans le HTML
-    pattern = r'<div class="deals-strip-section">.*?</div>\s*</div>\s*<p class="deals-disclaimer">.*?</p>\s*</div>'
-    nouveau_html = re.sub(pattern, nouveau_bloc, html_content, flags=re.DOTALL)
-
-    if nouveau_html == html_content:
-        print("  Pattern non trouve, tentative alternative...")
-        start = html_content.find('<div class="deals-strip-section">')
-        end = html_content.find('</div>', html_content.find('</div>', html_content.find('</div>', start) + 1) + 1) + 6
-        if start != -1:
-            nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
+    # Methode directe: chercher le debut et la fin du bloc
+    start = html_content.find('<div class="deals-strip-section">')
+    end = html_content.find('</div>', html_content.find('</p>', html_content.find('deals-disclaimer')) ) + 6
+    if start != -1 and end > start:
+        nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
+        print("  Bloc deals-strip remplace avec succes")
+    else:
+        print("  ERREUR: Bloc deals-strip non trouve dans le HTML")
+        nouveau_html = html_content
 
     # ----------------------------------------------------------------
     # Mettre a jour les route-cards avec les prix des deals trouves
