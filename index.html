@@ -85,6 +85,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,15,30,0.92
 .routes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:32px}
 .route-card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:border-color var(--transition)}
 .route-card:hover{border-color:rgba(255,107,0,0.4)}
+.route-card.has-deal{border-color:rgba(255,107,0,0.5);cursor:pointer}
+.route-card.has-deal:hover{border-color:var(--orange);background:var(--dark4)}
+.route-deal-price{font-size:13px;font-weight:700;color:var(--orange);margin-left:auto;text-align:right}
+.route-deal-saving{font-size:10px;background:var(--orange-soft);color:var(--orange);padding:1px 5px;border-radius:3px;font-weight:600}
 .route-flag{font-size:22px;line-height:1}
 .route-from{font-size:10px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.06em}
 .route-to{font-size:14px;font-weight:600;color:var(--text-white)}
@@ -165,30 +169,30 @@ footer p{font-size:13px;color:var(--text-dim)}
 <h2 class="section-title">YUL vers le monde entier</h2>
 <p class="section-body">On surveille les deals vers toutes les destinations : Europe, Asie, Afrique, Ameriques, Oceanie. Toute destination avec une bonne economie est captee automatiquement.</p>
 <div class="routes-grid">
-<div class="route-card"><span class="route-flag">🇫🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Paris</div></div></div>
-<div class="route-card"><span class="route-flag">🇵🇹</span><div><div class="route-from">YUL vers</div><div class="route-to">Lisbonne</div></div></div>
-<div class="route-card"><span class="route-flag">🇪🇸</span><div><div class="route-from">YUL vers</div><div class="route-to">Barcelone</div></div></div>
-<div class="route-card"><span class="route-flag">🇮🇹</span><div><div class="route-from">YUL vers</div><div class="route-to">Rome</div></div></div>
-<div class="route-card"><span class="route-flag">🇬🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Athenes</div></div></div>
-<div class="route-card"><span class="route-flag">🇳🇱</span><div><div class="route-from">YUL vers</div><div class="route-to">Amsterdam</div></div></div>
-<div class="route-card"><span class="route-flag">🇩🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Francfort</div></div></div>
-<div class="route-card"><span class="route-flag">🇬🇧</span><div><div class="route-from">YUL vers</div><div class="route-to">Londres</div></div></div>
-<div class="route-card"><span class="route-flag">🇹🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Istanbul</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Casablanca</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Marrakech</div></div></div>
-<div class="route-card"><span class="route-flag">🇦🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Dubai</div></div></div>
-<div class="route-card"><span class="route-flag">🇹🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Bangkok</div></div></div>
-<div class="route-card"><span class="route-flag">🇯🇵</span><div><div class="route-from">YUL vers</div><div class="route-to">Tokyo</div></div></div>
-<div class="route-card"><span class="route-flag">🇰🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Seoul</div></div></div>
-<div class="route-card"><span class="route-flag">🇸🇬</span><div><div class="route-from">YUL vers</div><div class="route-to">Singapour</div></div></div>
-<div class="route-card"><span class="route-flag">🇮🇩</span><div><div class="route-from">YUL vers</div><div class="route-to">Bali</div></div></div>
-<div class="route-card"><span class="route-flag">🇵🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Manille</div></div></div>
-<div class="route-card"><span class="route-flag">🇮🇳</span><div><div class="route-from">YUL vers</div><div class="route-to">Delhi</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Cancun</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Mexico</div></div></div>
-<div class="route-card"><span class="route-flag">🇨🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">La Havane</div></div></div>
-<div class="route-card"><span class="route-flag">🇧🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Sao Paulo</div></div></div>
-<div class="route-card"><span class="route-flag">🇦🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">Sydney</div></div></div>
+<div class="route-card" data-iata="CDG"><span class="route-flag">🇫🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Paris</div></div></div>
+<div class="route-card" data-iata="LIS"><span class="route-flag">🇵🇹</span><div><div class="route-from">YUL vers</div><div class="route-to">Lisbonne</div></div></div>
+<div class="route-card" data-iata="BCN"><span class="route-flag">🇪🇸</span><div><div class="route-from">YUL vers</div><div class="route-to">Barcelone</div></div></div>
+<div class="route-card" data-iata="FCO"><span class="route-flag">🇮🇹</span><div><div class="route-from">YUL vers</div><div class="route-to">Rome</div></div></div>
+<div class="route-card" data-iata="ATH"><span class="route-flag">🇬🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Athenes</div></div></div>
+<div class="route-card" data-iata="AMS"><span class="route-flag">🇳🇱</span><div><div class="route-from">YUL vers</div><div class="route-to">Amsterdam</div></div></div>
+<div class="route-card" data-iata="FRA"><span class="route-flag">🇩🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Francfort</div></div></div>
+<div class="route-card" data-iata="LHR"><span class="route-flag">🇬🇧</span><div><div class="route-from">YUL vers</div><div class="route-to">Londres</div></div></div>
+<div class="route-card" data-iata="IST"><span class="route-flag">🇹🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Istanbul</div></div></div>
+<div class="route-card" data-iata="CMN"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Casablanca</div></div></div>
+<div class="route-card" data-iata="RAK"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Marrakech</div></div></div>
+<div class="route-card" data-iata="DXB"><span class="route-flag">🇦🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Dubai</div></div></div>
+<div class="route-card" data-iata="BKK"><span class="route-flag">🇹🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Bangkok</div></div></div>
+<div class="route-card" data-iata="NRT"><span class="route-flag">🇯🇵</span><div><div class="route-from">YUL vers</div><div class="route-to">Tokyo</div></div></div>
+<div class="route-card" data-iata="ICN"><span class="route-flag">🇰🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Seoul</div></div></div>
+<div class="route-card" data-iata="SIN"><span class="route-flag">🇸🇬</span><div><div class="route-from">YUL vers</div><div class="route-to">Singapour</div></div></div>
+<div class="route-card" data-iata="DPS"><span class="route-flag">🇮🇩</span><div><div class="route-from">YUL vers</div><div class="route-to">Bali</div></div></div>
+<div class="route-card" data-iata="MNL"><span class="route-flag">🇵🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Manille</div></div></div>
+<div class="route-card" data-iata="DEL"><span class="route-flag">🇮🇳</span><div><div class="route-from">YUL vers</div><div class="route-to">Delhi</div></div></div>
+<div class="route-card" data-iata="CUN"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Cancun</div></div></div>
+<div class="route-card" data-iata="MEX"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Mexico</div></div></div>
+<div class="route-card" data-iata="HAV"><span class="route-flag">🇨🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">La Havane</div></div></div>
+<div class="route-card" data-iata="GRU"><span class="route-flag">🇧🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Sao Paulo</div></div></div>
+<div class="route-card" data-iata="SYD"><span class="route-flag">🇦🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">Sydney</div></div></div>
 </div>
 </div>
 <hr class="divider"/>
