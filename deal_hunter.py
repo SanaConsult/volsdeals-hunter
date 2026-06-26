@@ -194,16 +194,18 @@ def mettre_a_jour_site(deals_valides):
     html_content = base64.b64decode(data["content"]).decode("utf-8")
 
     # Generer les nouvelles deal-pills avec les vrais deals
-    # Generer les nouvelles deal-pills avec liens Skyscanner
-    pills_html = ""
     depart = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y%m%d")
     retour = (datetime.now(timezone.utc) + timedelta(days=37)).strftime("%Y%m%d")
+    pills_html = ""
     for d in deals_valides[:5]:  # Max 5 deals affiches
         ville = d.get("ville_destination", "")
         code = d.get("code_destination", "").lower()
         prix = d.get("prix_deal_cad", d.get("prix_deal", ""))
         econ = d.get("economie_pct", "")
-        lien_sky = f"https://www.skyscanner.ca/transport/flights/yul/{code}/{depart}/{retour}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
+        lien_sky = (
+            f"https://www.skyscanner.ca/transport/flights/yul/{code}/"
+            f"{depart}/{retour}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
+        )
         pills_html += (
             f'<a href="{lien_sky}" target="_blank" rel="noopener" class="deal-pill">'
             f'<span class="route">YUL → {ville}</span>'
