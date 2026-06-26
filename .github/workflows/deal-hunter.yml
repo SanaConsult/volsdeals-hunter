@@ -2,10 +2,13 @@ name: VolsDeals — Deal Hunter
 
 on:
   schedule:
-    - cron: '0 11 * * *'   # 7h heure Montréal (UTC-4)
-    - cron: '0 17 * * *'   # 13h heure Montréal
-    - cron: '0 23 * * *'   # 19h heure Montréal
-  workflow_dispatch:        # Permet de lancer manuellement
+    - cron: '0 11 * * *'  # 7h heure Montreal (UTC-4)
+    - cron: '0 17 * * *'  # 13h heure Montreal
+    - cron: '0 23 * * *'  # 19h heure Montreal
+  workflow_dispatch:       # Permet de lancer manuellement
+
+permissions:
+  contents: write
 
 jobs:
   hunt:
@@ -20,11 +23,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Installer les dépendances
+      - name: Installer les dependances
         run: pip install feedparser anthropic requests
 
       - name: Lancer le Deal Hunter
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python deal_hunter.py
