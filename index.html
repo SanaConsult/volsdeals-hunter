@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VolsDeals — Deals de vols exclusifs depuis Montréal</title>
-<meta name="description" content="Reçois les deals de vols secrets depuis Montréal vers le Maroc et l\'Europe. Erreurs tarifaires, routes cachées, prix fous — directement dans ta boîte."/>
-<meta property="og:title" content="VolsDeals — Vols à prix fous depuis Montréal"/>
+<title>VolsDeals — Deals de vols exclusifs depuis Montreal</title>
+<meta name="description" content="Recois les deals de vols secrets depuis Montreal vers le monde entier. Gratuit."/>
+<meta property="og:title" content="VolsDeals — Vols a prix fous depuis Montreal"/>
 <meta property="og:description" content="Les deals que personne ne voit venir. YUL vers le monde entier. Gratuit."/>
 <meta property="og:type" content="website"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,72 +20,67 @@
 --dark4:#111d35;
 --border:#1e3050;
 --orange:#ff6b00;
---orange-dim:rgba(255,107,0,0.12);
 --orange-soft:rgba(255,107,0,0.18);
 --text-white:#ffffff;
 --text-muted:#8a9ab5;
 --text-dim:#4a5a75;
 --text-faint:#2a3a55;
---radius:10px;
---radius-sm:6px;
---transition:0.22s ease;
+--radius:12px;
+--radius-sm:8px;
+--transition:0.2s ease;
 }
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--text-white);line-height:1.6;-webkit-font-smoothing:antialiased}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,15,30,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:box-shadow 0.3s ease}
-nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,0.4)}
-.nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.nav-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text-white);text-decoration:none;display:flex;align-items:center;gap:8px}
-.nav-logo-dot{width:7px;height:7px;background:var(--orange);border-radius:50%;display:inline-block}
-.nav-links{display:flex;gap:28px;list-style:none}
-.nav-links a{color:var(--text-muted);text-decoration:none;font-size:14px;font-weight:500;transition:color var(--transition)}
+body{background:var(--dark);color:var(--text-white);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,15,30,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:64px}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:900;font-size:20px;display:flex;align-items:center;gap:6px}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:14px;color:var(--text-muted);transition:color var(--transition)}
 .nav-links a:hover{color:var(--text-white)}
-.nav-cta{background:var(--orange);color:#fff;font-size:13px;font-weight:600;padding:9px 18px;border-radius:var(--radius-sm);text-decoration:none;transition:opacity var(--transition);white-space:nowrap}
+.nav-cta{background:var(--orange);color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:opacity var(--transition)}
 .nav-cta:hover{opacity:0.88}
-.nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text-white);border-radius:2px;transition:var(--transition)}
-.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:var(--dark2);z-index:99;padding:32px 24px;flex-direction:column;gap:8px}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text-white)}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--dark2);border-bottom:1px solid var(--border);padding:24px;flex-direction:column;gap:16px;z-index:99}
 .mobile-menu.open{display:flex}
-.mobile-menu a{color:var(--text-muted);text-decoration:none;font-size:17px;font-weight:500;padding:14px 0;border-bottom:1px solid var(--border);transition:color var(--transition)}
-.mobile-menu a:hover{color:var(--text-white)}
-.mobile-menu .mobile-cta{margin-top:16px;background:var(--orange);color:#fff;text-align:center;padding:16px;border-radius:var(--radius);font-weight:600;border:none}
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;background:var(--dark2)}
-.hero-glow{position:absolute;top:10%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(255,107,0,0.10) 0%,transparent 65%);pointer-events:none}
-.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:0.25;pointer-events:none}
+.mobile-menu a{color:var(--text-muted);font-size:17px;font-weight:500}
+.mobile-cta{margin-top:8px;background:var(--orange);color:#fff;padding:14px 24px;border-radius:var(--radius-sm);text-align:center}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(255,107,0,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.3;pointer-events:none}
 .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:0.14em;color:var(--orange);text-transform:uppercase;margin-bottom:24px;background:var(--orange-dim);border:1px solid rgba(255,107,0,0.25);padding:6px 14px;border-radius:20px}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--orange);border-radius:50%;display:inline-block}
-.hero-headline{font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,58px);font-weight:800;line-height:1.1;margin-bottom:22px;letter-spacing:-0.02em}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:0.1em;border:1px solid rgba(255,107,0,0.35);border-radius:100px;padding:6px 16px;margin-bottom:32px}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--orange);border-radius:50%}
+.hero-headline{font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,58px);font-weight:900;line-height:1.1;margin-bottom:24px}
 .hero-headline span{color:var(--orange)}
 .hero-sub{font-size:17px;color:var(--text-muted);line-height:1.7;max-width:500px;margin:0 auto 40px}
 .email-wrap{max-width:480px;margin:0 auto 14px}
-.email-form{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--dark4)}
-.email-form input{flex:1;background:transparent;border:none;padding:15px 18px;font-size:15px;color:var(--text-white);outline:none;font-family:'Inter',sans-serif;min-width:0}
+.email-form{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--dark3)}
+.email-form input{flex:1;background:transparent;border:none;padding:15px 18px;font-size:15px;color:var(--text-white);outline:none}
 .email-form input::placeholder{color:var(--text-dim)}
-.email-form button{background:var(--orange);color:#fff;border:none;padding:15px 22px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:opacity var(--transition)}
+.email-form button{background:var(--orange);color:#fff;border:none;padding:15px 22px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--transition)}
 .email-form button:hover{opacity:0.88}
-.email-form button:disabled{opacity:0.6;cursor:not-allowed}
 .form-note{font-size:12px;color:var(--text-dim);text-align:center}
 .form-note strong{color:var(--text-muted)}
-.form-success{display:none;background:rgba(29,158,117,0.15);border:1px solid rgba(29,158,117,0.3);color:#5dcaa5;padding:14px 20px;border-radius:var(--radius);font-size:14px;font-weight:500;text-align:center;margin-top:12px}
-.form-error{display:none;background:rgba(255,70,70,0.1);border:1px solid rgba(255,70,70,0.3);color:#ff7070;padding:14px 20px;border-radius:var(--radius);font-size:14px;font-weight:500;text-align:center;margin-top:12px}
 .deals-strip-section{background:var(--dark3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 24px}
 .deals-strip{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.deal-pill{background:var(--dark4);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;transition:border-color var(--transition),background var(--transition)}.deal-pill:hover{border-color:var(--orange);background:var(--dark3)}
+.deal-pill{background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;transition:border-color var(--transition),background var(--transition)}
+.deal-pill:hover{border-color:var(--orange);background:var(--dark3)}
 .deal-pill .route{font-size:13px;font-weight:600;color:#e8edf5}
 .deal-pill .price{font-size:13px;color:var(--orange);font-weight:700}
 .deal-pill .saving{font-size:11px;background:var(--orange-soft);color:var(--orange);padding:2px 8px;border-radius:4px;font-weight:600}
 .deal-pill .sep{width:1px;height:16px;background:var(--border)}
 .deals-disclaimer{text-align:center;font-size:11px;color:var(--text-faint);margin-top:12px;font-style:italic}
-.section{padding:80px 24px;max-width:960px;margin:0 auto}
-.section-label{font-size:11px;font-weight:600;letter-spacing:0.14em;color:var(--orange);text-transform:uppercase;margin-bottom:12px}
-.section-title{font-family:'Syne',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:700;color:var(--text-white);margin-bottom:14px;line-height:1.2}
-.section-body{font-size:16px;color:var(--text-muted);line-height:1.7;max-width:580px}
+.section{padding:80px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:12px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:900;margin-bottom:16px}
+.section-body{font-size:16px;color:var(--text-muted);max-width:580px;line-height:1.7}
 .divider{border:none;border-top:1px solid var(--border);margin:0}
-.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:40px}
-.how-card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
-.how-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--orange);opacity:0.35;line-height:1;margin-bottom:12px}
-.how-title{font-size:15px;font-weight:600;color:var(--text-white);margin-bottom:8px}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin-top:40px}
+.how-step{background:var(--dark3);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.how-num{font-family:'Syne',sans-serif;font-size:48px;font-weight:900;color:var(--orange);opacity:0.7;line-height:1;margin-bottom:12px}
+.how-title{font-size:16px;font-weight:700;margin-bottom:8px}
 .how-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
 .routes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:32px}
 .route-card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:border-color var(--transition)}
@@ -95,39 +90,26 @@ nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,0.4)}
 .route-to{font-size:14px;font-weight:600;color:var(--text-white)}
 .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:40px}
 .why-card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;gap:16px;align-items:flex-start}
-.why-icon{width:40px;height:40px;border-radius:8px;background:var(--orange-dim);border:1px solid rgba(255,107,0,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.why-icon svg{width:20px;height:20px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.why-title{font-size:14px;font-weight:600;color:var(--text-white);margin-bottom:5px}
-.why-desc{font-size:13px;color:var(--text-muted);line-height:1.55}
-.cta-bottom{background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;text-align:center}
-.cta-bottom .email-wrap{max-width:480px;margin:32px auto 14px}
-footer{background:var(--dark);border-top:1px solid var(--border);padding:32px 24px;text-align:center}
-.footer-inner{max-width:960px;margin:0 auto}
-.footer-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--text-white);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:7px}
-.footer-logo-dot{width:6px;height:6px;background:var(--orange);border-radius:50%}
-.footer-tagline{font-size:13px;color:var(--text-dim);margin-bottom:20px}
-.footer-links{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.footer-links a{font-size:12px;color:var(--text-dim);text-decoration:none;transition:color var(--transition)}
-.footer-links a:hover{color:var(--text-muted)}
-.footer-copy{font-size:11px;color:var(--text-faint)}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.6s ease,transform 0.6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-@media(max-width:640px){
+.why-icon{width:40px;height:40px;border-radius:8px;background:var(--orange-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.why-icon svg{width:20px;height:20px;stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.why-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.why-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+.cta-section{background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;text-align:center}
+.cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:900;margin-bottom:16px}
+.cta-section p{color:var(--text-muted);font-size:16px;margin-bottom:40px}
+footer{padding:40px 24px;border-top:1px solid var(--border);text-align:center}
+footer p{font-size:13px;color:var(--text-dim)}
+@media(max-width:768px){
 .nav-links,.nav-cta{display:none}
 .nav-hamburger{display:flex}
-.email-form{flex-direction:column;border-radius:var(--radius)}
-.email-form input{border-radius:var(--radius) var(--radius) 0 0;padding:14px 16px}
-.email-form button{border-radius:0 0 var(--radius) var(--radius);padding:14px 16px;text-align:center}
-.hero-headline{font-size:32px}
-.deals-strip{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+.routes-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 }
 </style>
 </head>
 <body>
-
-<nav id="mainNav">
+<nav>
 <div class="nav-inner">
-<a href="#" class="nav-logo"><span class="nav-logo-dot"></span>VolsDeals<span class="nav-logo-dot"></span></a>
+<a href="#hero" class="nav-logo"><span class="nav-logo-dot"></span>VolsDeals<span class="nav-logo-dot"></span></a>
 <ul class="nav-links">
 <li><a href="#comment">Comment ca marche</a></li>
 <li><a href="#destinations">Destinations</a></li>
@@ -137,14 +119,12 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:32px 24
 <button class="nav-hamburger" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
 </div>
 </nav>
-
 <div class="mobile-menu" id="mobileMenu">
 <a href="#comment">Comment ca marche</a>
 <a href="#destinations">Destinations</a>
 <a href="#pourquoi">Pourquoi nous</a>
 <a href="#inscription" class="mobile-cta">Je m'inscris gratuitement</a>
 </div>
-
 <section class="hero" id="hero">
 <div class="hero-glow"></div>
 <div class="hero-grid-bg"></div>
@@ -153,39 +133,38 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:32px 24
 <h1 class="hero-headline">Les vols a prix fous que<br><span>personne ne voit venir</span></h1>
 <p class="hero-sub">On surveille en continu les tarifs secrets, erreurs de prix et routes cachees. Tu recois l'alerte directement dans ta boite — avant que ca disparaisse.</p>
 <div class="email-wrap" id="inscription">
-<form class="email-form" id="heroForm">
+<form class="email-form" action="https://app.brevo.com/account/register" method="get" target="_blank">
 <input type="email" name="email" placeholder="ton@email.com" required/>
-<button type="submit" id="heroBtn">Je m'inscris — Gratuit</button>
+<button type="submit">Je m'inscris — Gratuit</button>
 </form>
-<div class="form-success" id="heroSuccess">Inscription reussie ! Tu recevras les prochains deals directement dans ta boite.</div>
-<div class="form-error" id="heroError">Une erreur est survenue. Essaie encore.</div>
-<p class="form-note" style="margin-top:10px">Gratuit · <strong>Zero spam</strong> · Desabonnement en 1 clic</p>
 </div>
+<p class="form-note">Gratuit · <strong>Zero spam</strong> · Desabonnement en 1 clic</p>
 </div>
 </section>
-
 <div class="deals-strip-section">
 <div class="deals-strip">
-<a href="https://www.skyscanner.ca/transport/flights/yul/hel/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Helsinki</span><span class="sep"></span><span class="price">604 $</span><span class="saving">-51%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/nan/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Nadi</span><span class="sep"></span><span class="price">1021 $</span><span class="saving">-38%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/tll/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Tallinn</span><span class="sep"></span><span class="price">796 $</span><span class="saving">-39%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/nan/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Nadi</span><span class="sep"></span><span class="price">1021 $</span><span class="saving">-38%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/nan/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Nadi</span><span class="sep"></span><span class="price">815 $</span><span class="saving">-46%</span></a>
+<a href="https://www.skyscanner.ca/transport/flights/yul/hel/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Helsinki</span><span class="sep"></span><span class="price">604 $</span><span class="saving">-51%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/tll/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Tallinn</span><span class="sep"></span><span class="price">796 $</span><span class="saving">-47%</span></a><a href="https://www.skyscanner.ca/transport/flights/yul/nan/20260726/20260802/?adults=1&currency=CAD&locale=fr-CA&market=CA" target="_blank" rel="noopener" class="deal-pill"><span class="route">YUL → Nadi</span><span class="sep"></span><span class="price">815 $</span><span class="saving">-50%</span></a>
 </div>
 <p class="deals-disclaimer">Deals detectes en temps reel · Mis a jour le 26 Jun 2026 10:39 UTC</p>
-</div><div class="how-title">Filtre Quebec</div><div class="how-desc">On adapte chaque deal pour un depart depuis YUL ou YQB. Zero deal inutilisable depuis l\'Europe ou les Etats-Unis.</div></div>
-<div class="how-card"><div class="how-num">03</div><div class="how-title">Alerte dans ta boite</div><div class="how-desc">Tu recois les instructions exactes pour booker, avec le lien direct. Pas besoin de chercher — tu cliques, tu reserves.</div></div>
-<div class="how-card"><div class="how-num">04</div><div class="how-title">Economies reelles</div><div class="how-desc">En moyenne 40 a 60% sous le prix normal. Certaines erreurs tarifaires permettent d'economiser plus de 700 $.</div></div>
 </div>
-</div>
-
 <hr class="divider"/>
-
-<div class="section reveal" id="destinations">
+<div class="section" id="comment">
+<p class="section-label">Comment ca marche</p>
+<h2 class="section-title">Simple. Automatique. Efficace.</h2>
+<p class="section-body">Notre robot scrute 11 sources specialisees 3x par jour. Claude AI analyse chaque deal. Tu recois uniquement les vraies opportunites.</p>
+<div class="how-grid">
+<div class="how-step"><div class="how-num">01</div><div class="how-title">On surveille pour toi</div><div class="how-desc">11 sources de deals en temps reel : Secret Flying, Flytrippers, Reddit, The Flight Deal et plus.</div></div>
+<div class="how-step"><div class="how-num">02</div><div class="how-title">Filtre Quebec</div><div class="how-desc">On adapte chaque deal pour un depart depuis YUL ou YQB. Zero deal inutilisable depuis l'Europe ou les Etats-Unis.</div></div>
+<div class="how-step"><div class="how-num">03</div><div class="how-title">Alerte dans ta boite</div><div class="how-desc">Tu recois le lien direct Skyscanner. Tu cliques, tu arrives sur Skyscanner pret a reserver. C'est tout.</div></div>
+<div class="how-step"><div class="how-num">04</div><div class="how-title">Economies reelles</div><div class="how-desc">En moyenne 40 a 60% sous le prix normal. Certaines erreurs tarifaires permettent d'economiser plus de 700 $.</div></div>
+</div>
+</div>
+<hr class="divider"/>
+<div class="section" id="destinations">
 <p class="section-label">Destinations surveillees</p>
-<h2 class="section-title">YUL vers le Maroc et l\'Europe</h2>
-<p class="section-body">Notre specialite : les routes que les Quebecois empruntent le plus, avec un focus sur les destinations marocaines et europeennes.</p>
+<h2 class="section-title">YUL vers le monde entier</h2>
+<p class="section-body">On surveille les deals vers toutes les destinations : Europe, Asie, Afrique, Ameriques, Oceanie. Toute destination avec une bonne economie est captee automatiquement.</p>
 <div class="routes-grid">
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Casablanca</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Marrakech</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Fes</div></div></div>
-<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Agadir</div></div></div>
 <div class="route-card"><span class="route-flag">🇫🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Paris</div></div></div>
 <div class="route-card"><span class="route-flag">🇵🇹</span><div><div class="route-from">YUL vers</div><div class="route-to">Lisbonne</div></div></div>
 <div class="route-card"><span class="route-flag">🇪🇸</span><div><div class="route-from">YUL vers</div><div class="route-to">Barcelone</div></div></div>
@@ -193,19 +172,56 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:32px 24
 <div class="route-card"><span class="route-flag">🇬🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Athenes</div></div></div>
 <div class="route-card"><span class="route-flag">🇳🇱</span><div><div class="route-from">YUL vers</div><div class="route-to">Amsterdam</div></div></div>
 <div class="route-card"><span class="route-flag">🇩🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Francfort</div></div></div>
+<div class="route-card"><span class="route-flag">🇬🇧</span><div><div class="route-from">YUL vers</div><div class="route-to">Londres</div></div></div>
 <div class="route-card"><span class="route-flag">🇹🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Istanbul</div></div></div>
+<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Casablanca</div></div></div>
+<div class="route-card"><span class="route-flag">🇲🇦</span><div><div class="route-from">YUL vers</div><div class="route-to">Marrakech</div></div></div>
+<div class="route-card"><span class="route-flag">🇦🇪</span><div><div class="route-from">YUL vers</div><div class="route-to">Dubai</div></div></div>
+<div class="route-card"><span class="route-flag">🇹🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Bangkok</div></div></div>
+<div class="route-card"><span class="route-flag">🇯🇵</span><div><div class="route-from">YUL vers</div><div class="route-to">Tokyo</div></div></div>
+<div class="route-card"><span class="route-flag">🇰🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Seoul</div></div></div>
+<div class="route-card"><span class="route-flag">🇸🇬</span><div><div class="route-from">YUL vers</div><div class="route-to">Singapour</div></div></div>
+<div class="route-card"><span class="route-flag">🇮🇩</span><div><div class="route-from">YUL vers</div><div class="route-to">Bali</div></div></div>
+<div class="route-card"><span class="route-flag">🇵🇭</span><div><div class="route-from">YUL vers</div><div class="route-to">Manille</div></div></div>
+<div class="route-card"><span class="route-flag">🇮🇳</span><div><div class="route-from">YUL vers</div><div class="route-to">Delhi</div></div></div>
+<div class="route-card"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Cancun</div></div></div>
+<div class="route-card"><span class="route-flag">🇲🇽</span><div><div class="route-from">YUL vers</div><div class="route-to">Mexico</div></div></div>
+<div class="route-card"><span class="route-flag">🇨🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">La Havane</div></div></div>
+<div class="route-card"><span class="route-flag">🇧🇷</span><div><div class="route-from">YUL vers</div><div class="route-to">Sao Paulo</div></div></div>
+<div class="route-card"><span class="route-flag">🇦🇺</span><div><div class="route-from">YUL vers</div><div class="route-to">Sydney</div></div></div>
 </div>
 </div>
-
 <hr class="divider"/>
-
-<div class="section reveal" id="pourquoi">
-<p class="section-label">Pourquoi VolsDeals</p>
+<div class="section" id="pourquoi">
+<p class="section-label">Pourquoi nous</p>
 <h2 class="section-title">Ce que tu ne trouveras pas sur Google Flights</h2>
-<p class="section-body">Les agregateurs publics montrent les prix disponibles. Nous, on cherche ce qu'ils ne montrent pas.</p>
+<p class="section-body">Les agregateurs publics montrent les prix disponibles. Nous, on traque ce qu'ils ne montrent pas.</p>
 <div class="why-grid">
+<div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div><div class="why-title">Intelligence artificielle</div><div class="why-desc">Claude AI analyse chaque article pour detecter les vrais deals et ecarter le bruit. Aucun deal rate manuellement.</div></div></div>
 <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div><div class="why-title">Erreurs tarifaires</div><div class="why-desc">Des compagnies publient parfois des prix errones pendant quelques heures. On les repere avant tout le monde.</div></div></div>
 <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div><div><div class="why-title">Routes creatives</div><div class="why-desc">Deux billets separes, connexion via NYC, hidden city — des strategies que les moteurs classiques ne suggerent jamais.</div></div></div>
 <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div class="why-title">Alertes ultra-rapides</div><div class="why-desc">Les deals durent en moyenne 2 a 6h. Notre systeme t'alerte en temps reel — pas le lendemain matin.</div></div></div>
-<div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><div class="why-title">Focus communaute Quebec</div><div class="why-desc">100% adapte depuis YUL ou YQB. On connait les routes Maroc-Quebec, les compagnies et les periodes de pointe.</div></div></div>
+<div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><div class="why-title">Focus 100% Quebec</div><div class="why-desc">Tous les deals sont adaptes depuis YUL ou YQB. Lien Skyscanner direct — tu cliques, tu arrives pret a reserver.</div></div></div>
 </div>
+</div>
+<div class="cta-section">
+<h2>Pret a voyager moins cher ?</h2>
+<p>Rejoins les abonnes qui recoivent les meilleurs deals de vols depuis Montreal.</p>
+<div class="email-wrap">
+<form class="email-form" action="https://app.brevo.com/account/register" method="get" target="_blank">
+<input type="email" name="email" placeholder="ton@email.com" required/>
+<button type="submit">Je m'inscris — Gratuit</button>
+</form>
+</div>
+<p class="form-note">Gratuit · <strong>Zero spam</strong> · Desabonnement en 1 clic</p>
+</div>
+<footer>
+<p>VolsDeals &bull; Laval, Quebec &bull; <a href="mailto:alaouisana0@gmail.com" style="color:var(--orange)">Contact</a></p>
+</footer>
+<script>
+var toggle=document.getElementById('navToggle');
+var menu=document.getElementById('mobileMenu');
+if(toggle&&menu){toggle.addEventListener('click',function(){menu.classList.toggle('open')});menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open')})});}
+</script>
+</body>
+</html>
