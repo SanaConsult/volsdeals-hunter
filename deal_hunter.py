@@ -327,6 +327,48 @@ def mettre_a_jour_site(deals_valides):
         if start != -1:
             nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
 
+    # Mettre a jour les route-cards avec les prix des deals trouves
+    # Construire un dict: code_iata_upper -> deal info
+    deals_par_code = {}
+    for d in deals_valides:
+        code_up = d.get("code_destination", "").upper()
+        if code_up:
+            deals_par_code[code_up] = d
+
+    def remplacer_route_card(m):
+        # Extraire le code pays et la ville du match
+        inner = m.group(0)
+        # Chercher le code IATA dans la route-card via data-iata ou correspondance ville->code
+        # On va chercher dans le HTML de la carte: data-iata="XXX"
+        iata_match = re.search(r'data-iata="([A-Z]+)"', inner)
+        if not iata_match:
+            return inner
+        code = iata_match.group(1)
+        if code not in deals_par_code:
+            return inner
+        d = deals_par_code[code]
+        prix_c = d.get("prix_deal_cad", d.get("prix_deal", ""))
+        econ_c = d.get("economie_pct", "")
+        code_low = code.lower()
+        lien_c = (
+            f"https://www.skyscanner.ca/transport/flights/yul/{code_low}/"
+            f"{depart}/{retour}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
+        )
+        # Remplacer la div par une version cliquable avec prix
+        new_card = inner.replace(
+            '<div class="route-card"',
+            f'<a href="{lien_c}" target="_blank" rel="noopener" class="route-card" style="text-decoration:none;display:flex;"'
+        ).replace('</div>', '</a>', 1)
+        # Ajouter le prix dans la carte
+        new_card = new_card.replace(
+            '</div></a>',
+            f'<div style="margin-left:auto;text-align:right"><div style="font-size:13px;font-weight:700;color:#ff6b00">{prix_c}$</div><div style="font-size:10px;color:#ff6b00;background:rgba(255,107,0,0.18);padding:1px 5px;border-radius:3px">-{econ_c}%</div></div></div></a>'
+        )
+        return new_card
+
+    route_pattern = r'<div class="route-card">.*?</div></div>'
+    nouveau_html = re.sub(route_pattern, remplacer_route_card, nouveau_html, flags=re.DOTALL)
+
     # Commiter via API GitHub
     contenu_b64 = base64.b64encode(nouveau_html.encode("utf-8")).decode("utf-8")
     payload = {
