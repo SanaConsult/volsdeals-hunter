@@ -22,127 +22,129 @@ TON_EMAIL = "alaouisana0@gmail.com"
 USD_TO_CAD = 1.37
 
 FEEDS = [
-    {"name": "Secret Flying Canada", "url": "https://www.secretflying.com/posts/category/canada/feed/"},
-    {"name": "Flytrippers", "url": "https://flytrippers.com/feed/"},
-    {"name": "Prince of Travel", "url": "https://princeoftravel.com/feed/"},
-    {"name": "Reddit r/airmiles", "url": "https://www.reddit.com/r/airmiles/.rss"},
-    {"name": "Reddit r/CanadaDeals", "url": "https://www.reddit.com/r/CanadaDeals/.rss"},
-    {"name": "Secret Flying", "url": "https://secretflying.com/feed/"},
-    {"name": "The Flight Deal", "url": "https://www.theflightdeal.com/feed/"},
-    {"name": "Reddit r/flightdeals", "url": "https://www.reddit.com/r/flightdeals/.rss"},
-    {"name": "Airfarewatchdog", "url": "https://www.airfarewatchdog.com/blog/feed/"},
-    {"name": "Going (Scotts Cheap)", "url": "https://going.com/guides/feed"},
-    {"name": "Holidaypiraten", "url": "https://www.holidaypiraten.de/feed/"},
+{"name": "Secret Flying Canada", "url": "https://www.secretflying.com/posts/category/canada/feed/"},
+{"name": "Flytrippers", "url": "https://flytrippers.com/feed/"},
+{"name": "Prince of Travel", "url": "https://princeoftravel.com/feed/"},
+{"name": "Reddit r/airmiles", "url": "https://www.reddit.com/r/airmiles/.rss"},
+{"name": "Reddit r/CanadaDeals", "url": "https://www.reddit.com/r/CanadaDeals/.rss"},
+{"name": "Secret Flying", "url": "https://secretflying.com/feed/"},
+{"name": "The Flight Deal", "url": "https://www.theflightdeal.com/feed/"},
+{"name": "Reddit r/flightdeals", "url": "https://www.reddit.com/r/flightdeals/.rss"},
+{"name": "Airfarewatchdog", "url": "https://www.airfarewatchdog.com/blog/feed/"},
+{"name": "Going (Scotts Cheap)", "url": "https://going.com/guides/feed"},
+{"name": "Holidaypiraten", "url": "https://www.holidaypiraten.de/feed/"},
 ]
 
 # Destinations mondiales avec seuils de prix CAD depuis YUL
 SEUILS = {
-    # Europe de l Ouest
-    "CDG": {"ville": "Paris", "seuil": 650, "normal": 780},
-    "LIS": {"ville": "Lisbonne", "seuil": 650, "normal": 800},
-    "BCN": {"ville": "Barcelone", "seuil": 650, "normal": 820},
-    "FCO": {"ville": "Rome", "seuil": 660, "normal": 830},
-    "ATH": {"ville": "Athenes", "seuil": 680, "normal": 850},
-    "AMS": {"ville": "Amsterdam", "seuil": 640, "normal": 790},
-    "FRA": {"ville": "Francfort", "seuil": 640, "normal": 790},
-    "MAD": {"ville": "Madrid", "seuil": 650, "normal": 820},
-    "NCE": {"ville": "Nice", "seuil": 660, "normal": 830},
-    "MRS": {"ville": "Marseille", "seuil": 660, "normal": 830},
-    "LHR": {"ville": "Londres", "seuil": 600, "normal": 750},
-    "LGW": {"ville": "Londres Gatwick", "seuil": 600, "normal": 750},
-    "DUB": {"ville": "Dublin", "seuil": 620, "normal": 780},
-    "MAN": {"ville": "Manchester", "seuil": 620, "normal": 780},
-    "ZRH": {"ville": "Zurich", "seuil": 680, "normal": 850},
-    "VIE": {"ville": "Vienne", "seuil": 660, "normal": 830},
-    "BRU": {"ville": "Bruxelles", "seuil": 640, "normal": 790},
-    "CPH": {"ville": "Copenhague", "seuil": 660, "normal": 830},
-    "OSL": {"ville": "Oslo", "seuil": 660, "normal": 840},
-    "ARN": {"ville": "Stockholm", "seuil": 660, "normal": 840},
-    "HEL": {"ville": "Helsinki", "seuil": 680, "normal": 860},
-    "MXP": {"ville": "Milan", "seuil": 650, "normal": 820},
-    "PMI": {"ville": "Palma de Majorque", "seuil": 700, "normal": 870},
-    # Europe de l Est
-    "WAW": {"ville": "Varsovie", "seuil": 680, "normal": 850},
-    "PRG": {"ville": "Prague", "seuil": 670, "normal": 840},
-    "BUD": {"ville": "Budapest", "seuil": 680, "normal": 850},
-    "OTP": {"ville": "Bucarest", "seuil": 700, "normal": 880},
-    "SOF": {"ville": "Sofia", "seuil": 700, "normal": 880},
-    "KRK": {"ville": "Cracovie", "seuil": 690, "normal": 860},
-    "VNO": {"ville": "Vilnius", "seuil": 700, "normal": 880},
-    # Afrique du Nord et Maroc
-    "CMN": {"ville": "Casablanca", "seuil": 700, "normal": 880},
-    "RAK": {"ville": "Marrakech", "seuil": 720, "normal": 900},
-    "FEZ": {"ville": "Fes", "seuil": 740, "normal": 920},
-    "AGA": {"ville": "Agadir", "seuil": 730, "normal": 910},
-    "TNG": {"ville": "Tanger", "seuil": 750, "normal": 930},
-    "CAI": {"ville": "Le Caire", "seuil": 780, "normal": 1000},
-    "TUN": {"ville": "Tunis", "seuil": 760, "normal": 950},
-    "ALG": {"ville": "Alger", "seuil": 780, "normal": 980},
-    # Afrique subsaharienne
-    "NBO": {"ville": "Nairobi", "seuil": 900, "normal": 1300},
-    "ACC": {"ville": "Accra", "seuil": 900, "normal": 1300},
-    "LOS": {"ville": "Lagos", "seuil": 950, "normal": 1400},
-    "DAK": {"ville": "Dakar", "seuil": 850, "normal": 1200},
-    "CPT": {"ville": "Le Cap", "seuil": 1000, "normal": 1500},
-    "JNB": {"ville": "Johannesburg", "seuil": 1000, "normal": 1500},
-    "ADD": {"ville": "Addis-Abeba", "seuil": 950, "normal": 1400},
-    "KMG": {"ville": "Kumasi", "seuil": 920, "normal": 1350},
-    # Moyen-Orient
-    "DXB": {"ville": "Dubai", "seuil": 750, "normal": 1100},
-    "IST": {"ville": "Istanbul", "seuil": 700, "normal": 860},
-    "DOH": {"ville": "Doha", "seuil": 800, "normal": 1150},
-    "AUH": {"ville": "Abu Dhabi", "seuil": 780, "normal": 1120},
-    "AMM": {"ville": "Amman", "seuil": 820, "normal": 1100},
-    "BEY": {"ville": "Beyrouth", "seuil": 800, "normal": 1100},
-    "TLV": {"ville": "Tel Aviv", "seuil": 780, "normal": 1050},
-    "KWI": {"ville": "Koweit", "seuil": 820, "normal": 1150},
-    "MCT": {"ville": "Muscat", "seuil": 830, "normal": 1200},
-    # Asie du Sud-Est
-    "BKK": {"ville": "Bangkok", "seuil": 800, "normal": 1200},
-    "SIN": {"ville": "Singapore", "seuil": 850, "normal": 1300},
-    "KUL": {"ville": "Kuala Lumpur", "seuil": 820, "normal": 1250},
-    "MNL": {"ville": "Manille", "seuil": 830, "normal": 1300},
-    "CGK": {"ville": "Jakarta", "seuil": 880, "normal": 1350},
-    "SGN": {"ville": "Ho Chi Minh Ville", "seuil": 850, "normal": 1300},
-    "HAN": {"ville": "Hanoi", "seuil": 860, "normal": 1320},
-    "DPS": {"ville": "Bali", "seuil": 900, "normal": 1380},
-    "BKI": {"ville": "Kota Kinabalu", "seuil": 900, "normal": 1380},
-    # Asie de l Est
-    "NRT": {"ville": "Tokyo Narita", "seuil": 900, "normal": 1400},
-    "HND": {"ville": "Tokyo Haneda", "seuil": 900, "normal": 1400},
-    "ICN": {"ville": "Seoul", "seuil": 880, "normal": 1380},
-    "PEK": {"ville": "Pekin", "seuil": 860, "normal": 1350},
-    "PVG": {"ville": "Shanghai", "seuil": 860, "normal": 1350},
-    "HKG": {"ville": "Hong Kong", "seuil": 850, "normal": 1330},
-    "TPE": {"ville": "Taipei", "seuil": 870, "normal": 1360},
-    # Asie du Sud
-    "DEL": {"ville": "Delhi", "seuil": 800, "normal": 1200},
-    "BOM": {"ville": "Mumbai", "seuil": 810, "normal": 1220},
-    "CMB": {"ville": "Colombo", "seuil": 850, "normal": 1300},
-    "DAC": {"ville": "Dhaka", "seuil": 870, "normal": 1330},
-    "KTM": {"ville": "Katmandou", "seuil": 880, "normal": 1350},
-    # Ameriques
-    "MEX": {"ville": "Mexico", "seuil": 500, "normal": 700},
-    "CUN": {"ville": "Cancun", "seuil": 450, "normal": 650},
-    "BOG": {"ville": "Bogota", "seuil": 550, "normal": 750},
-    "GRU": {"ville": "Sao Paulo", "seuil": 650, "normal": 950},
-    "EZE": {"ville": "Buenos Aires", "seuil": 700, "normal": 1050},
-    "SCL": {"ville": "Santiago", "seuil": 680, "normal": 1000},
-    "LIM": {"ville": "Lima", "seuil": 600, "normal": 850},
-    "GIG": {"ville": "Rio de Janeiro", "seuil": 650, "normal": 950},
-    "UIO": {"ville": "Quito", "seuil": 580, "normal": 820},
-    "PTY": {"ville": "Panama", "seuil": 450, "normal": 620},
-    "HAV": {"ville": "La Havane", "seuil": 400, "normal": 580},
-    "SDQ": {"ville": "Saint-Domingue", "seuil": 380, "normal": 550},
-    "MBJ": {"ville": "Montego Bay", "seuil": 350, "normal": 500},
-    "SJU": {"ville": "San Juan", "seuil": 350, "normal": 500},
-    "NAS": {"ville": "Nassau", "seuil": 350, "normal": 500},
-    "GEO": {"ville": "Georgetown", "seuil": 500, "normal": 720},
-    # Oceanie
-    "SYD": {"ville": "Sydney", "seuil": 1100, "normal": 1700},
-    "MEL": {"ville": "Melbourne", "seuil": 1100, "normal": 1700},
-    "AKL": {"ville": "Auckland", "seuil": 1150, "normal": 1800},
-    "PPT": {"ville": "Papeete", "seuil": 900, "normal": 1400},
+# Europe de l Ouest
+"CDG": {"ville": "Paris", "seuil": 650, "normal": 780},
+"LIS": {"ville": "Lisbonne", "seuil": 650, "normal": 800},
+"BCN": {"ville": "Barcelone", "seuil": 650, "normal": 820},
+"FCO": {"ville": "Rome", "seuil": 660, "normal": 830},
+"ATH": {"ville": "Athenes", "seuil": 680, "normal": 850},
+"AMS": {"ville": "Amsterdam", "seuil": 640, "normal": 790},
+"FRA": {"ville": "Francfort", "seuil": 640, "normal": 790},
+"MAD": {"ville": "Madrid", "seuil": 650, "normal": 820},
+"NCE": {"ville": "Nice", "seuil": 660, "normal": 830},
+"MRS": {"ville": "Marseille", "seuil": 660, "normal": 830},
+"LHR": {"ville": "Londres", "seuil": 600, "normal": 750},
+"LGW": {"ville": "Londres Gatwick", "seuil": 600, "normal": 750},
+"DUB": {"ville": "Dublin", "seuil": 620, "normal": 780},
+"MAN": {"ville": "Manchester", "seuil": 620, "normal": 780},
+"ZRH": {"ville": "Zurich", "seuil": 680, "normal": 850},
+"VIE": {"ville": "Vienne", "seuil": 660, "normal": 830},
+"BRU": {"ville": "Bruxelles", "seuil": 640, "normal": 790},
+"CPH": {"ville": "Copenhague", "seuil": 660, "normal": 830},
+"OSL": {"ville": "Oslo", "seuil": 660, "normal": 840},
+"ARN": {"ville": "Stockholm", "seuil": 660, "normal": 840},
+"HEL": {"ville": "Helsinki", "seuil": 680, "normal": 860},
+"MXP": {"ville": "Milan", "seuil": 650, "normal": 820},
+"PMI": {"ville": "Palma de Majorque", "seuil": 700, "normal": 870},
+# Europe de l Est
+"WAW": {"ville": "Varsovie", "seuil": 680, "normal": 850},
+"PRG": {"ville": "Prague", "seuil": 670, "normal": 840},
+"BUD": {"ville": "Budapest", "seuil": 680, "normal": 850},
+"OTP": {"ville": "Bucarest", "seuil": 700, "normal": 880},
+"SOF": {"ville": "Sofia", "seuil": 700, "normal": 880},
+"KRK": {"ville": "Cracovie", "seuil": 690, "normal": 860},
+"VNO": {"ville": "Vilnius", "seuil": 700, "normal": 880},
+"TLL": {"ville": "Tallinn", "seuil": 700, "normal": 880},
+# Afrique du Nord et Maroc
+"CMN": {"ville": "Casablanca", "seuil": 700, "normal": 880},
+"RAK": {"ville": "Marrakech", "seuil": 720, "normal": 900},
+"FEZ": {"ville": "Fes", "seuil": 740, "normal": 920},
+"AGA": {"ville": "Agadir", "seuil": 730, "normal": 910},
+"TNG": {"ville": "Tanger", "seuil": 750, "normal": 930},
+"CAI": {"ville": "Le Caire", "seuil": 780, "normal": 1000},
+"TUN": {"ville": "Tunis", "seuil": 760, "normal": 950},
+"ALG": {"ville": "Alger", "seuil": 780, "normal": 980},
+# Afrique subsaharienne
+"NBO": {"ville": "Nairobi", "seuil": 900, "normal": 1300},
+"ACC": {"ville": "Accra", "seuil": 900, "normal": 1300},
+"LOS": {"ville": "Lagos", "seuil": 950, "normal": 1400},
+"DAK": {"ville": "Dakar", "seuil": 850, "normal": 1200},
+"CPT": {"ville": "Le Cap", "seuil": 1000, "normal": 1500},
+"JNB": {"ville": "Johannesburg", "seuil": 1000, "normal": 1500},
+"ADD": {"ville": "Addis-Abeba", "seuil": 950, "normal": 1400},
+"KMG": {"ville": "Kumasi", "seuil": 920, "normal": 1350},
+# Moyen-Orient
+"DXB": {"ville": "Dubai", "seuil": 750, "normal": 1100},
+"IST": {"ville": "Istanbul", "seuil": 700, "normal": 860},
+"DOH": {"ville": "Doha", "seuil": 800, "normal": 1150},
+"AUH": {"ville": "Abu Dhabi", "seuil": 780, "normal": 1120},
+"AMM": {"ville": "Amman", "seuil": 820, "normal": 1100},
+"BEY": {"ville": "Beyrouth", "seuil": 800, "normal": 1100},
+"TLV": {"ville": "Tel Aviv", "seuil": 780, "normal": 1050},
+"KWI": {"ville": "Koweit", "seuil": 820, "normal": 1150},
+"MCT": {"ville": "Muscat", "seuil": 830, "normal": 1200},
+# Asie du Sud-Est
+"BKK": {"ville": "Bangkok", "seuil": 800, "normal": 1200},
+"SIN": {"ville": "Singapore", "seuil": 850, "normal": 1300},
+"KUL": {"ville": "Kuala Lumpur", "seuil": 820, "normal": 1250},
+"MNL": {"ville": "Manille", "seuil": 830, "normal": 1300},
+"CGK": {"ville": "Jakarta", "seuil": 880, "normal": 1350},
+"SGN": {"ville": "Ho Chi Minh Ville", "seuil": 850, "normal": 1300},
+"HAN": {"ville": "Hanoi", "seuil": 860, "normal": 1320},
+"DPS": {"ville": "Bali", "seuil": 900, "normal": 1380},
+"BKI": {"ville": "Kota Kinabalu", "seuil": 900, "normal": 1380},
+"NAN": {"ville": "Nadi Fiji", "seuil": 950, "normal": 1500},
+# Asie de l Est
+"NRT": {"ville": "Tokyo Narita", "seuil": 900, "normal": 1400},
+"HND": {"ville": "Tokyo Haneda", "seuil": 900, "normal": 1400},
+"ICN": {"ville": "Seoul", "seuil": 880, "normal": 1380},
+"PEK": {"ville": "Pekin", "seuil": 860, "normal": 1350},
+"PVG": {"ville": "Shanghai", "seuil": 860, "normal": 1350},
+"HKG": {"ville": "Hong Kong", "seuil": 850, "normal": 1330},
+"TPE": {"ville": "Taipei", "seuil": 870, "normal": 1360},
+# Asie du Sud
+"DEL": {"ville": "Delhi", "seuil": 800, "normal": 1200},
+"BOM": {"ville": "Mumbai", "seuil": 810, "normal": 1220},
+"CMB": {"ville": "Colombo", "seuil": 850, "normal": 1300},
+"DAC": {"ville": "Dhaka", "seuil": 870, "normal": 1330},
+"KTM": {"ville": "Katmandou", "seuil": 880, "normal": 1350},
+# Ameriques
+"MEX": {"ville": "Mexico", "seuil": 500, "normal": 700},
+"CUN": {"ville": "Cancun", "seuil": 450, "normal": 650},
+"BOG": {"ville": "Bogota", "seuil": 550, "normal": 750},
+"GRU": {"ville": "Sao Paulo", "seuil": 650, "normal": 950},
+"EZE": {"ville": "Buenos Aires", "seuil": 700, "normal": 1050},
+"SCL": {"ville": "Santiago", "seuil": 680, "normal": 1000},
+"LIM": {"ville": "Lima", "seuil": 600, "normal": 850},
+"GIG": {"ville": "Rio de Janeiro", "seuil": 650, "normal": 950},
+"UIO": {"ville": "Quito", "seuil": 580, "normal": 820},
+"PTY": {"ville": "Panama", "seuil": 450, "normal": 620},
+"HAV": {"ville": "La Havane", "seuil": 400, "normal": 580},
+"SDQ": {"ville": "Saint-Domingue", "seuil": 380, "normal": 550},
+"MBJ": {"ville": "Montego Bay", "seuil": 350, "normal": 500},
+"SJU": {"ville": "San Juan", "seuil": 350, "normal": 500},
+"NAS": {"ville": "Nassau", "seuil": 350, "normal": 500},
+"GEO": {"ville": "Georgetown", "seuil": 500, "normal": 720},
+# Oceanie
+"SYD": {"ville": "Sydney", "seuil": 1100, "normal": 1700},
+"MEL": {"ville": "Melbourne", "seuil": 1100, "normal": 1700},
+"AKL": {"ville": "Auckland", "seuil": 1150, "normal": 1800},
+"PPT": {"ville": "Papeete", "seuil": 900, "normal": 1400},
 }
 
 def scraper_sources():
@@ -248,7 +250,7 @@ def verifier_seuil(analyse):
     if code in SEUILS:
         seuil = SEUILS[code]["seuil"]
         return (prix_cad <= seuil, seuil)
-    # Destination inconnue: accepter si economie >= 30% ou si prix < 800 CAD (bonne affaire generale)
+    # Destination inconnue: accepter si economie >= 30% ou si prix < 800 CAD
     try:
         economie = float(analyse.get("economie_pct", 0) or 0)
     except (TypeError, ValueError):
@@ -262,7 +264,7 @@ def verifier_seuil(analyse):
     return (False, None)
 
 def mettre_a_jour_site(deals_valides):
-    """Met a jour la bande de deals sur index.html via l API GitHub"""
+    """Met a jour la bande de deals et les route-cards sur index.html via l API GitHub"""
     if not GITHUB_TOKEN:
         print("  GITHUB_TOKEN absent, mise a jour du site ignoree")
         return
@@ -299,7 +301,7 @@ def mettre_a_jour_site(deals_valides):
         )
         pills_html += (
             f'<a href="{lien_sky}" target="_blank" rel="noopener" class="deal-pill">'
-            f'<span class="route">YUL → {ville}</span>'
+            f'<span class="route">YUL \u2192 {ville}</span>'
             f'<span class="sep"></span>'
             f'<span class="price">{prix} $</span>'
             f'<span class="saving">-{econ}%</span>'
@@ -312,7 +314,7 @@ def mettre_a_jour_site(deals_valides):
         '<div class="deals-strip">\n'
         + pills_html + '\n'
         '</div>\n'
-        f'<p class="deals-disclaimer">Deals detectes en temps reel · Mis a jour le {date_maj}</p>\n'
+        f'<p class="deals-disclaimer">Deals detectes en temps reel \u00b7 Mis a jour le {date_maj}</p>\n'
         '</div>'
     )
 
@@ -327,8 +329,9 @@ def mettre_a_jour_site(deals_valides):
         if start != -1:
             nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
 
+    # ----------------------------------------------------------------
     # Mettre a jour les route-cards avec les prix des deals trouves
-    # Construire un dict: code_iata_upper -> deal info
+    # ----------------------------------------------------------------
     deals_par_code = {}
     for d in deals_valides:
         code_up = d.get("code_destination", "").upper()
@@ -336,11 +339,9 @@ def mettre_a_jour_site(deals_valides):
             deals_par_code[code_up] = d
 
     def remplacer_route_card(m):
-        # Extraire le code pays et la ville du match
         inner = m.group(0)
-        # Chercher le code IATA dans la route-card via data-iata ou correspondance ville->code
-        # On va chercher dans le HTML de la carte: data-iata="XXX"
-        iata_match = re.search(r'data-iata="([A-Z]+)"', inner)
+        # Chercher l attribut data-iata dans la carte
+        iata_match = re.search(r'data-iata="([A-Z]{2,4})"', inner)
         if not iata_match:
             return inner
         code = iata_match.group(1)
@@ -354,19 +355,41 @@ def mettre_a_jour_site(deals_valides):
             f"https://www.skyscanner.ca/transport/flights/yul/{code_low}/"
             f"{depart}/{retour}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
         )
-        # Remplacer la div par une version cliquable avec prix
-        new_card = inner.replace(
-            '<div class="route-card"',
-            f'<a href="{lien_c}" target="_blank" rel="noopener" class="route-card" style="text-decoration:none;display:flex;"'
-        ).replace('</div>', '</a>', 1)
-        # Ajouter le prix dans la carte
-        new_card = new_card.replace(
-            '</div></a>',
-            f'<div style="margin-left:auto;text-align:right"><div style="font-size:13px;font-weight:700;color:#ff6b00">{prix_c}$</div><div style="font-size:10px;color:#ff6b00;background:rgba(255,107,0,0.18);padding:1px 5px;border-radius:3px">-{econ_c}%</div></div></div></a>'
+        # Extraire le contenu interne de la route-card (tout sauf la div exterieure)
+        # La structure est: <div class="route-card" data-iata="XXX">...<div>...</div></div>
+        # On reconstruit: <a class="route-card has-deal" href="...">...<div class="deal-badge">PRIX</div></div></a>
+        # Remplacer l ouverture <div class="route-card" ...> par <a ...>
+        new_card = re.sub(
+            r'<div class="route-card"([^>]*)>',
+            f'<a href="{lien_c}" target="_blank" rel="noopener" class="route-card has-deal"\1 style="text-decoration:none;display:flex;align-items:center;">',
+            inner,
+            count=1
         )
+        # Ajouter le badge prix avant la fermeture de la card
+        # La route-card se ferme par </div></div> (inner-div puis outer-div)
+        # On insere le badge prix juste avant le dernier </div>
+        badge = (
+            f'<div style="margin-left:auto;text-align:right;">'
+            f'<div style="font-size:13px;font-weight:700;color:#ff6b00;">{prix_c}$</div>'
+            f'<div style="font-size:10px;color:#ff6b00;background:rgba(255,107,0,0.18);'
+            f'padding:1px 5px;border-radius:3px;">-{econ_c}%</div>'
+            f'</div>'
+        )
+        # Trouver la position du dernier </div> et inserer le badge avant
+        last_div_pos = new_card.rfind('</div>')
+        if last_div_pos != -1:
+            new_card = new_card[:last_div_pos] + badge + '</div>'
+        else:
+            new_card += badge
+        # Remplacer la fermeture </div> finale par </a>
+        last_div_pos2 = new_card.rfind('</div>')
+        if last_div_pos2 != -1:
+            new_card = new_card[:last_div_pos2] + '</a>'
+        print(f"  Route-card {code} mise a jour avec {prix_c}$ CAD (-{econ_c}%)")
         return new_card
 
-    route_pattern = r'<div class="route-card">.*?</div></div>'
+    # PATTERN CORRIGE: accepte les route-cards avec OU sans attributs (data-iata etc.)
+    route_pattern = r'<div class="route-card"[^>]*>.*?</div>\s*</div>'
     nouveau_html = re.sub(route_pattern, remplacer_route_card, nouveau_html, flags=re.DOTALL)
 
     # Commiter via API GitHub
