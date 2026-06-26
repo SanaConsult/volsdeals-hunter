@@ -171,7 +171,7 @@ def verifier_seuil(analyse):
     return (False, None)
 
 def mettre_a_jour_site(deals_valides):
-    """Met a jour la bande de deals sur index.html via l API GitHub"""
+    """Met a jour la bande de deals sur index.html via l API GitHub avec liens Skyscanner"""
     if not GITHUB_TOKEN:
         print("  GITHUB_TOKEN absent, mise a jour du site ignoree")
         return
@@ -193,17 +193,29 @@ def mettre_a_jour_site(deals_valides):
     sha = data["sha"]
     html_content = base64.b64decode(data["content"]).decode("utf-8")
 
-    # Generer les nouvelles deal-pills avec les vrais deals
+    def skyscanner_url(code_dest, prix):
+        """Genere un lien Skyscanner YUL -> destination"""
+        from datetime import datetime, timezone, timedelta
+        # Date aller dans ~30 jours, retour dans ~37 jours
+        depart = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")
+        retour = (datetime.now(timezone.utc) + timedelta(days=37)).strftime("%Y-%m-%d")
+        return (
+            f"https://www.skyscanner.ca/transport/flights/yul/{code_dest.lower()}/"
+            f"{depart.replace('-','')}/{retour.replace('-','')}/"
+            f"?adults=1&currency=CAD&locale=fr-CA&market=CA"
+        )
+
+    # Generer les nouvelles deal-pills avec liens Skyscanner
     pills_html = ""
     for d in deals_valides[:5]:  # Max 5 deals affiches
         ville = d.get("ville_destination", "")
         code = d.get("code_destination", "")
         prix = d.get("prix_deal_cad", d.get("prix_deal", ""))
         econ = d.get("economie_pct", "")
-        lien = d.get("lien_reservation", "#")
+        lien = skyscanner_url(code, prix)
         pills_html += (
             f'<a href="{lien}" target="_blank" rel="noopener" class="deal-pill">'
-            f'<span class="route">YUL vers {code}</span>'
+            f'<span class="route">YUL \u2192 {ville}</span>'
             f'<span class="sep"></span>'
             f'<span class="price">{prix} $</span>'
             f'<span class="saving">-{econ}%</span>'
@@ -216,25 +228,34 @@ def mettre_a_jour_site(deals_valides):
         '<div class="deals-strip">\n'
         + pills_html + '\n'
         '</div>\n'
-        f'<p class="deals-disclaimer">Deals detectes en temps reel · Mis a jour le {date_maj}</p>\n'
+        f'<p class="deals-disclaimer">Deals detectes en temps reel · Mis a jour le {date_maj} · Clique pour reserver sur Skyscanner</p>\n'
         '</div>'
     )
 
-    # Remplacer le bloc deals-strip-section dans le HTML
-    pattern = r'<div class="deals-strip-section">.*?</div>\s*</div>\s*<p class="deals-disclaimer">.*?</p>\s*</div>'
-    nouveau_html = re.sub(pattern, nouveau_bloc, html_content, flags=re.DOTALL)
-
-    if nouveau_html == html_content:
-        print("  Pattern non trouve, tentative alternative...")
-        start = html_content.find('<div class="deals-strip-section">')
-        end = html_content.find('</div>', html_content.find('</div>', html_content.find('</div>', start) + 1) + 1) + 6
-        if start != -1:
-            nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
+    # Remplacer le bloc deals-strip-section
+    start = html_content.find('<div class="deals-strip-section">')
+    if start != -1:
+        # Trouver la fin du bloc (fermeture du div principal)
+        depth = 0
+        i = start
+        while i < len(html_content):
+            if html_content[i:i+4] == '<div':
+                depth += 1
+            elif html_content[i:i+6] == '</div':
+                depth -= 1
+                if depth == 0:
+                    end = i + 6
+                    break
+            i += 1
+        nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
+    else:
+        print("  Bloc deals non trouve dans index.html")
+        return
 
     # Commiter via API GitHub
     contenu_b64 = base64.b64encode(nouveau_html.encode("utf-8")).decode("utf-8")
     payload = {
-        "message": f"Auto: mise a jour deals du {date_maj}",
+        "message": f"Auto: mise a jour deals Skyscanner du {date_maj}",
         "content": contenu_b64,
         "sha": sha,
         "committer": {
@@ -244,7 +265,7 @@ def mettre_a_jour_site(deals_valides):
     }
     r2 = requests.put(url, headers=headers, json=payload)
     if r2.status_code in (200, 201):
-        print(f"  Site mis a jour avec {len(deals_valides)} deal(s) !")
+        print(f"  Site mis a jour avec {len(deals_valides)} deal(s) ! (liens Skyscanner)")
     else:
         print(f"  Erreur mise a jour site: {r2.status_code} {r2.text[:200]}")
 
