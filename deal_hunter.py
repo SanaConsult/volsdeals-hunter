@@ -348,7 +348,13 @@ def envoyer_alerte(deal_info, liste_emails):
     ville = deal_info.get("ville_destination", "")
     prix = deal_info.get("prix_deal_cad", deal_info.get("prix_deal", ""))
     econ = deal_info.get("economie_pct", "")
-    lien = deal_info.get("lien_reservation", "#")
+    code_dest = deal_info.get("code_destination", "").lower()
+    depart_sky = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y%m%d")
+    retour_sky = (datetime.now(timezone.utc) + timedelta(days=37)).strftime("%Y%m%d")
+    lien = (
+        f"https://www.skyscanner.ca/transport/flights/yul/{code_dest}/"
+        f"{depart_sky}/{retour_sky}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
+    ) if code_dest else deal_info.get("lien_reservation", "#")
     type_ = deal_info.get("type_deal", "promo")
     norm = deal_info.get("prix_normal_estime", "")
     pays = deal_info.get("pays", "")
