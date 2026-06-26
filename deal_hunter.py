@@ -1,6 +1,7 @@
 """
 VolsDeals -- Deal Hunter
 Scrape les sources de deals, filtre avec Claude AI, envoie via Brevo
+Met a jour index.html avec les vrais deals trouves
 """
 
 import feedparser
@@ -9,49 +10,53 @@ import requests
 from datetime import datetime, timezone
 import anthropic
 import os
+import re
+import base64
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-BREVO_API_KEY     = os.environ.get("BREVO_API_KEY")
-BREVO_LIST_ID     = 3
-TON_EMAIL         = "alaouisana0@gmail.com"
-USD_TO_CAD        = 1.37
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+GITHUB_REPO = "SanaConsult/volsdeals-hunter"
+BREVO_LIST_ID = 3
+TON_EMAIL = "alaouisana0@gmail.com"
+USD_TO_CAD = 1.37
 
 FEEDS = [
-    {"name": "Secret Flying Canada",  "url": "https://www.secretflying.com/posts/category/canada/feed/"},
-    {"name": "Flytrippers",           "url": "https://flytrippers.com/feed/"},
-    {"name": "Prince of Travel",      "url": "https://princeoftravel.com/feed/"},
-    {"name": "Reddit r/airmiles",     "url": "https://www.reddit.com/r/airmiles/.rss"},
-    {"name": "Reddit r/CanadaDeals",  "url": "https://www.reddit.com/r/CanadaDeals/.rss"},
-    {"name": "Secret Flying",         "url": "https://secretflying.com/feed/"},
-    {"name": "The Flight Deal",       "url": "https://www.theflightdeal.com/feed/"},
-    {"name": "Reddit r/flightdeals",  "url": "https://www.reddit.com/r/flightdeals/.rss"},
-    {"name": "Airfarewatchdog",       "url": "https://www.airfarewatchdog.com/blog/feed/"},
-    {"name": "Going (Scotts Cheap)",  "url": "https://going.com/guides/feed"},
-    {"name": "Holidaypiraten",        "url": "https://www.holidaypiraten.de/feed/"},
+{"name": "Secret Flying Canada", "url": "https://www.secretflying.com/posts/category/canada/feed/"},
+{"name": "Flytrippers", "url": "https://flytrippers.com/feed/"},
+{"name": "Prince of Travel", "url": "https://princeoftravel.com/feed/"},
+{"name": "Reddit r/airmiles", "url": "https://www.reddit.com/r/airmiles/.rss"},
+{"name": "Reddit r/CanadaDeals", "url": "https://www.reddit.com/r/CanadaDeals/.rss"},
+{"name": "Secret Flying", "url": "https://secretflying.com/feed/"},
+{"name": "The Flight Deal", "url": "https://www.theflightdeal.com/feed/"},
+{"name": "Reddit r/flightdeals", "url": "https://www.reddit.com/r/flightdeals/.rss"},
+{"name": "Airfarewatchdog", "url": "https://www.airfarewatchdog.com/blog/feed/"},
+{"name": "Going (Scotts Cheap)", "url": "https://going.com/guides/feed"},
+{"name": "Holidaypiraten", "url": "https://www.holidaypiraten.de/feed/"},
 ]
 
 SEUILS = {
-    "CMN": {"ville": "Casablanca",   "seuil": 700,  "normal": 880},
-    "RAK": {"ville": "Marrakech",    "seuil": 720,  "normal": 900},
-    "FEZ": {"ville": "Fes",          "seuil": 740,  "normal": 920},
-    "AGA": {"ville": "Agadir",       "seuil": 730,  "normal": 910},
-    "CDG": {"ville": "Paris",        "seuil": 650,  "normal": 780},
-    "LIS": {"ville": "Lisbonne",     "seuil": 650,  "normal": 800},
-    "BCN": {"ville": "Barcelone",    "seuil": 650,  "normal": 820},
-    "FCO": {"ville": "Rome",         "seuil": 660,  "normal": 830},
-    "ATH": {"ville": "Athenes",      "seuil": 680,  "normal": 850},
-    "AMS": {"ville": "Amsterdam",    "seuil": 640,  "normal": 790},
-    "IST": {"ville": "Istanbul",     "seuil": 700,  "normal": 860},
-    "FRA": {"ville": "Francfort",    "seuil": 640,  "normal": 790},
-    "MAD": {"ville": "Madrid",       "seuil": 650,  "normal": 820},
-    "NCE": {"ville": "Nice",         "seuil": 660,  "normal": 830},
-    "MRS": {"ville": "Marseille",    "seuil": 660,  "normal": 830},
-    "DXB": {"ville": "Dubai",        "seuil": 750,  "normal": 1100},
-    "BKK": {"ville": "Bangkok",      "seuil": 800,  "normal": 1200},
-    "MEX": {"ville": "Mexico",       "seuil": 500,  "normal": 700},
-    "CUN": {"ville": "Cancun",       "seuil": 450,  "normal": 650},
-    "NRT": {"ville": "Tokyo",        "seuil": 900,  "normal": 1400},
-    "SIN": {"ville": "Singapore",    "seuil": 850,  "normal": 1300},
+"CMN": {"ville": "Casablanca", "seuil": 700, "normal": 880},
+"RAK": {"ville": "Marrakech", "seuil": 720, "normal": 900},
+"FEZ": {"ville": "Fes", "seuil": 740, "normal": 920},
+"AGA": {"ville": "Agadir", "seuil": 730, "normal": 910},
+"CDG": {"ville": "Paris", "seuil": 650, "normal": 780},
+"LIS": {"ville": "Lisbonne", "seuil": 650, "normal": 800},
+"BCN": {"ville": "Barcelone", "seuil": 650, "normal": 820},
+"FCO": {"ville": "Rome", "seuil": 660, "normal": 830},
+"ATH": {"ville": "Athenes", "seuil": 680, "normal": 850},
+"AMS": {"ville": "Amsterdam", "seuil": 640, "normal": 790},
+"IST": {"ville": "Istanbul", "seuil": 700, "normal": 860},
+"FRA": {"ville": "Francfort", "seuil": 640, "normal": 790},
+"MAD": {"ville": "Madrid", "seuil": 650, "normal": 820},
+"NCE": {"ville": "Nice", "seuil": 660, "normal": 830},
+"MRS": {"ville": "Marseille", "seuil": 660, "normal": 830},
+"DXB": {"ville": "Dubai", "seuil": 750, "normal": 1100},
+"BKK": {"ville": "Bangkok", "seuil": 800, "normal": 1200},
+"MEX": {"ville": "Mexico", "seuil": 500, "normal": 700},
+"CUN": {"ville": "Cancun", "seuil": 450, "normal": 650},
+"NRT": {"ville": "Tokyo", "seuil": 900, "normal": 1400},
+"SIN": {"ville": "Singapore", "seuil": 850, "normal": 1300},
 }
 
 def scraper_sources():
@@ -62,11 +67,11 @@ def scraper_sources():
             feed = feedparser.parse(source["url"])
             for entry in feed.entries[:10]:
                 tous_les_deals.append({
-                    "source":  source["name"],
-                    "titre":   entry.get("title", ""),
+                    "source": source["name"],
+                    "titre": entry.get("title", ""),
                     "contenu": entry.get("summary", "")[:2000],
-                    "lien":    entry.get("link", ""),
-                    "date":    entry.get("published", ""),
+                    "lien": entry.get("link", ""),
+                    "date": entry.get("published", ""),
                 })
         except Exception as e:
             print(f"  Erreur {source['name']}: {e}")
@@ -77,7 +82,6 @@ def analyser_deal(deal, client):
     est_canadienne = any(x in deal["source"] for x in [
         "Canada", "Flytrippers", "Prince of Travel", "airmiles", "CanadaDeals"
     ])
-    # Construire le prompt sans f-string pour eviter les conflits avec les accolades JSON
     prompt = ("Tu es un expert en bons plans de vols pour les voyageurs de Montreal (YUL), Quebec, Canada.\n"
               "Analyse cet article et reponds en JSON.\n\n"
               "Source: " + deal["source"] + "\n"
@@ -102,8 +106,8 @@ def analyser_deal(deal, client):
               '  "raison_rejet": ""\n'
               '}\n\n'
               "Regles IMPORTANTES:\n"
-              "- contient_deal: true UNIQUEMENT si prix de vol numerique precis mentionne (ex: 389$, 450 USD). Sinon false\n"
-              "- prix_deal: entier positif (ex: 389). Si pas de prix precis -> 0 et contient_deal=false\n"
+              "- contient_deal: true UNIQUEMENT si prix de vol numerique precis mentionne. Sinon false\n"
+              "- prix_deal: entier positif. Si pas de prix precis -> 0 et contient_deal=false\n"
               "- adaptable_yul: true si vol possible depuis Montreal (YUL) directement ou via hub\n"
               "- code_destination: CMN, CDG, LIS, BCN, FCO, ATH, AMS, IST, RAK, FEZ, AGA, FRA, MAD, NCE, MRS, DXB, BKK, MEX, CUN, NRT, SIN\n"
               "- Si prix en USD: mets devise=USD (on convertira en CAD)\n"
@@ -138,8 +142,8 @@ def analyser_deal(deal, client):
         return {"contient_deal": False, "raison_rejet": "Erreur analyse: " + str(e)}
 
 def verifier_seuil(analyse):
-    code   = analyse.get("code_destination", "")
-    prix   = analyse.get("prix_deal", 0)
+    code = analyse.get("code_destination", "")
+    prix = analyse.get("prix_deal", 0)
     devise = analyse.get("devise", "CAD")
     try:
         prix = float(prix)
@@ -166,14 +170,92 @@ def verifier_seuil(analyse):
         return (True, None)
     return (False, None)
 
+def mettre_a_jour_site(deals_valides):
+    """Met a jour la bande de deals sur index.html via l API GitHub"""
+    if not GITHUB_TOKEN:
+        print("  GITHUB_TOKEN absent, mise a jour du site ignoree")
+        return
+    if not deals_valides:
+        print("  Aucun deal a afficher sur le site")
+        return
+
+    # Recuperer le fichier actuel
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/index.html"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        print(f"  Erreur recuperation index.html: {r.status_code}")
+        return
+    data = r.json()
+    sha = data["sha"]
+    html_content = base64.b64decode(data["content"]).decode("utf-8")
+
+    # Generer les nouvelles deal-pills avec les vrais deals
+    pills_html = ""
+    for d in deals_valides[:5]:  # Max 5 deals affiches
+        ville = d.get("ville_destination", "")
+        code = d.get("code_destination", "")
+        prix = d.get("prix_deal_cad", d.get("prix_deal", ""))
+        econ = d.get("economie_pct", "")
+        lien = d.get("lien_reservation", "#")
+        pills_html += (
+            f'<a href="{lien}" target="_blank" rel="noopener" class="deal-pill">'
+            f'<span class="route">YUL vers {code}</span>'
+            f'<span class="sep"></span>'
+            f'<span class="price">{prix} $</span>'
+            f'<span class="saving">-{econ}%</span>'
+            f'</a>'
+        )
+
+    date_maj = datetime.now(timezone.utc).strftime("%d %b %Y %H:%M UTC")
+    nouveau_bloc = (
+        '<div class="deals-strip-section">\n'
+        '<div class="deals-strip">\n'
+        + pills_html + '\n'
+        '</div>\n'
+        f'<p class="deals-disclaimer">Deals detectes en temps reel · Mis a jour le {date_maj}</p>\n'
+        '</div>'
+    )
+
+    # Remplacer le bloc deals-strip-section dans le HTML
+    pattern = r'<div class="deals-strip-section">.*?</div>\s*</div>\s*<p class="deals-disclaimer">.*?</p>\s*</div>'
+    nouveau_html = re.sub(pattern, nouveau_bloc, html_content, flags=re.DOTALL)
+
+    if nouveau_html == html_content:
+        print("  Pattern non trouve, tentative alternative...")
+        start = html_content.find('<div class="deals-strip-section">')
+        end = html_content.find('</div>', html_content.find('</div>', html_content.find('</div>', start) + 1) + 1) + 6
+        if start != -1:
+            nouveau_html = html_content[:start] + nouveau_bloc + html_content[end:]
+
+    # Commiter via API GitHub
+    contenu_b64 = base64.b64encode(nouveau_html.encode("utf-8")).decode("utf-8")
+    payload = {
+        "message": f"Auto: mise a jour deals du {date_maj}",
+        "content": contenu_b64,
+        "sha": sha,
+        "committer": {
+            "name": "VolsDeals Bot",
+            "email": "alaouisana0@gmail.com"
+        }
+    }
+    r2 = requests.put(url, headers=headers, json=payload)
+    if r2.status_code in (200, 201):
+        print(f"  Site mis a jour avec {len(deals_valides)} deal(s) !")
+    else:
+        print(f"  Erreur mise a jour site: {r2.status_code} {r2.text[:200]}")
+
 def envoyer_alerte(deal_info, liste_emails):
-    ville  = deal_info.get("ville_destination", "")
-    prix   = deal_info.get("prix_deal_cad", deal_info.get("prix_deal", ""))
-    econ   = deal_info.get("economie_pct", "")
-    lien   = deal_info.get("lien_reservation", "#")
-    type_  = deal_info.get("type_deal", "promo")
-    norm   = deal_info.get("prix_normal_estime", "")
-    pays   = deal_info.get("pays", "")
+    ville = deal_info.get("ville_destination", "")
+    prix = deal_info.get("prix_deal_cad", deal_info.get("prix_deal", ""))
+    econ = deal_info.get("economie_pct", "")
+    lien = deal_info.get("lien_reservation", "#")
+    type_ = deal_info.get("type_deal", "promo")
+    norm = deal_info.get("prix_normal_estime", "")
+    pays = deal_info.get("pays", "")
     try:
         score = int(deal_info.get("score_urgence", 5) or 5)
     except (TypeError, ValueError):
@@ -199,9 +281,9 @@ def envoyer_alerte(deal_info, liste_emails):
             '<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec</p>'
             '</div>')
     payload = {
-        "sender":      {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
-        "to":          [{"email": e} for e in liste_emails],
-        "subject":     sujet,
+        "sender": {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
+        "to": [{"email": e} for e in liste_emails],
+        "subject": sujet,
         "htmlContent": html,
     }
     r = requests.post(
@@ -261,9 +343,15 @@ def main():
         deals_valides.append(analyse)
     print(f"\n{len(deals_valides)} deal(s) valide(s) trouve(s)\n")
     if deals_valides:
-        meilleur = max(deals_valides, key=lambda x: x.get("score_urgence", 0) or 0)
+        # Trier par score d urgence (meilleurs en premier)
+        deals_valides.sort(key=lambda x: x.get("score_urgence", 0) or 0, reverse=True)
+        meilleur = deals_valides[0]
         prix_affiche = meilleur.get("prix_deal_cad", meilleur.get("prix_deal"))
         print(f"Meilleur deal : YUL -> {meilleur.get('ville_destination')} a {prix_affiche}$ CAD")
+        # Mettre a jour le site avec tous les deals trouves
+        print("\nMise a jour du site web...")
+        mettre_a_jour_site(deals_valides)
+        # Envoyer l alerte email
         abonnes = get_abonnes()
         if not abonnes:
             abonnes = [TON_EMAIL]
