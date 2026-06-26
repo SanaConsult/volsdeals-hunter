@@ -72,6 +72,7 @@ SEUILS = {
 "TLL": {"ville": "Tallinn", "seuil": 700, "normal": 880},
 "GOT": {"ville": "Goteborg", "seuil": 700, "normal": 900},
 "IAH": {"ville": "Houston", "seuil": 350, "normal": 550},
+"HOU": {"ville": "Houston", "seuil": 350, "normal": 550},
 # Afrique du Nord et Maroc
 "CMN": {"ville": "Casablanca", "seuil": 700, "normal": 880},
 "RAK": {"ville": "Marrakech", "seuil": 720, "normal": 900},
