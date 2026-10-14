@@ -19,6 +19,36 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPO = "SanaConsult/volsdeals-hunter"
 BREVO_LIST_ID = 3
 TON_EMAIL = "alaouisana0@gmail.com"
+
+# Alertes par destination : code IATA -> groupe pays (choisi sur volsdeals.com, attribut Brevo DESTINATIONS)
+GROUPES_DEST = {
+    "MA": ["CMN", "RAK", "FEZ", "AGA", "TNG", "RBA", "OUD", "NDR", "ESU"],
+    "FR": ["CDG", "ORY", "NCE", "MRS", "LYS", "TLS", "BOD", "NTE", "BIQ", "MPL"],
+    "PT": ["LIS", "OPO", "FAO", "PDL", "FNC"],
+    "TN": ["TUN", "DJE", "MIR", "NBE", "TOE"],
+    "IT": ["FCO", "MXP", "LIN", "VCE", "NAP", "BLQ", "FLR", "PSA", "CTA", "PMO", "TRN", "BGY"],
+    "DE": ["FRA", "BER", "MUC", "HAM", "DUS", "CGN", "STR"],
+    "MX": ["CUN", "PVR", "MEX", "SJD", "TQO", "GDL", "CZM", "MID"],
+    "GB": ["LHR", "LGW", "MAN", "EDI", "STN", "LTN", "BHX", "GLA"],
+    "IN": ["DEL", "BOM", "BLR", "GOI", "MAA", "HYD", "AMD"],
+    "JP": ["NRT", "HND", "TYO", "KIX", "OSA", "NGO", "FUK"],
+}
+
+def groupe_destination(code):
+    code = (code or "").strip().upper()
+    for g, codes in GROUPES_DEST.items():
+        if code in codes:
+            return g
+    return None
+
+def destinataires_pour(deal, abonnes):
+    """abonnes: {email: set de groupes | None}. None = tous les deals.
+    Toi (TON_EMAIL) recois toujours tout: le site lit ces emails pour afficher les deals."""
+    g = groupe_destination(deal.get("code_destination", ""))
+    res = [e for e, prefs in abonnes.items() if not prefs or (g and g in prefs)]
+    if TON_EMAIL not in res:
+        res.append(TON_EMAIL)
+    return res
 USD_TO_CAD = 1.37
 
 FEEDS = [
@@ -467,7 +497,8 @@ def envoyer_alerte(deal_info, liste_emails):
         print(f"  Erreur envoi email: {r.status_code} {r.text}")
 
 def get_abonnes():
-    emails = []
+    """Retourne {email: set de groupes | None}. None = aucune preference = tous les deals."""
+    abonnes = {}
     offset = 0
     while True:
         r = requests.get(
@@ -479,11 +510,14 @@ def get_abonnes():
         contacts = r.json().get("contacts", [])
         if not contacts:
             break
-        emails += [c["email"] for c in contacts]
+        for c in contacts:
+            raw = ((c.get("attributes") or {}).get("DESTINATIONS") or "").strip()
+            prefs = {x.strip().upper() for x in raw.split(",") if x.strip()} or None
+            abonnes[c["email"]] = prefs
         offset += 500
         if len(contacts) < 500:
             break
-    return emails
+    return abonnes
 
 def main():
     print("=" * 55)
@@ -524,11 +558,12 @@ def main():
         # Envoyer l alerte email
         abonnes = get_abonnes()
         if not abonnes:
-            abonnes = [TON_EMAIL]
+            destinataires = [TON_EMAIL]
             print(f"  Aucun abonne, envoi a {TON_EMAIL} uniquement")
         else:
-            print(f"  {len(abonnes)} abonne(s)")
-        envoyer_alerte(meilleur, abonnes)
+            destinataires = destinataires_pour(meilleur, abonnes)
+            print(f"  {len(abonnes)} abonne(s), {len(destinataires)} destinataire(s) pour ce deal")
+        envoyer_alerte(meilleur, destinataires)
     else:
         print("Aucun deal exceptionnel aujourd hui. On surveille...")
 
