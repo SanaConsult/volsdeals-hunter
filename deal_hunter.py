@@ -479,6 +479,9 @@ def envoyer_alerte(deal_info, liste_emails):
             '</div>'
             '<hr style="border:none;border-top:1px solid #1e3050;margin:32px 0">'
             '<p style="color:#4a5a75;font-size:12px;text-align:center">VolsDeals &bull; Laval, Quebec</p>'
+            '<p style="color:#4a5a75;font-size:12px;text-align:center">Tu recois ce courriel car tu es inscrit aux alertes VolsDeals. '
+            '<a href="https://volsdeals.com/desabonnement/" style="color:#8a9ab5">Se desabonner</a> &bull; '
+            '<a href="https://volsdeals.com/politique-de-confidentialite/" style="color:#8a9ab5">Confidentialite</a></p>'
             '</div>')
     payload = {
         "sender": {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
