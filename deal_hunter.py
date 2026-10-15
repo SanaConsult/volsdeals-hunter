@@ -483,21 +483,33 @@ def envoyer_alerte(deal_info, liste_emails):
             '<a href="https://volsdeals.com/desabonnement/" style="color:#8a9ab5">Se desabonner</a> &bull; '
             '<a href="https://volsdeals.com/politique-de-confidentialite/" style="color:#8a9ab5">Confidentialite</a></p>'
             '</div>')
-    payload = {
-        "sender": {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
-        "to": [{"email": e} for e in liste_emails],
-        "subject": sujet,
-        "htmlContent": html,
-    }
-    r = requests.post(
-        "https://api.brevo.com/v3/smtp/email",
-        headers={"api-key": BREVO_API_KEY, "Content-Type": "application/json"},
-        data=json.dumps(payload),
-    )
-    if r.status_code in (200, 201):
-        print(f"  Email envoye a {len(liste_emails)} abonne(s) !")
-    else:
-        print(f"  Erreur envoi email: {r.status_code} {r.text}")
+    # Un envoi par destinataire : les adresses des abonnes ne sont pas visibles entre elles.
+    # TON_EMAIL en premier : le site lit ces emails pour afficher les deals.
+    destinataires = sorted(set(liste_emails), key=lambda e: e != TON_EMAIL)
+    ok, erreurs = 0, 0
+    for email in destinataires:
+        payload = {
+            "sender": {"name": "VolsDeals", "email": "alaouisana0@gmail.com"},
+            "to": [{"email": email}],
+            "subject": sujet,
+            "htmlContent": html,
+        }
+        try:
+            r = requests.post(
+                "https://api.brevo.com/v3/smtp/email",
+                headers={"api-key": BREVO_API_KEY, "Content-Type": "application/json"},
+                data=json.dumps(payload),
+                timeout=30,
+            )
+            if r.status_code in (200, 201):
+                ok += 1
+            else:
+                erreurs += 1
+                print(f"  Erreur envoi a {email}: {r.status_code} {r.text[:200]}")
+        except requests.RequestException as e:
+            erreurs += 1
+            print(f"  Erreur envoi a {email}: {e}")
+    print(f"  Emails envoyes: {ok}/{len(destinataires)} ({erreurs} erreur(s))")
 
 def get_abonnes():
     """Retourne {email: set de groupes | None}. None = aucune preference = tous les deals."""
