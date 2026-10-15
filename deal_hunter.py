@@ -298,6 +298,9 @@ def verifier_seuil(analyse):
 
 def mettre_a_jour_site(deals_valides):
     """Met a jour la bande de deals et les route-cards sur index.html via l API GitHub"""
+    # Desactive : volsdeals.com (WordPress) lit les deals via Brevo, plus besoin de modifier index.html
+    print("  Mise a jour de index.html desactivee (le site lit les deals via Brevo)")
+    return
     if not GITHUB_TOKEN:
         print("  GITHUB_TOKEN absent, mise a jour du site ignoree")
         return
