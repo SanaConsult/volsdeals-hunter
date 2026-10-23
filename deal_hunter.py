@@ -16,6 +16,8 @@ import base64
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+# Identifiant Travelpayouts (Aviasales) du projet VolsDeals
+TP_MARKER = os.environ.get("TP_MARKER", "729235.Zz4260d1fa3f4942f2a740bed-729235")
 GITHUB_REPO = "SanaConsult/volsdeals-hunter"
 BREVO_LIST_ID = 3
 TON_EMAIL = "alaouisana0@gmail.com"
@@ -453,9 +455,9 @@ def envoyer_alerte(deal_info, liste_emails):
     depart_sky = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y%m%d")
     retour_sky = (datetime.now(timezone.utc) + timedelta(days=37)).strftime("%Y%m%d")
     lien = (
-        f"https://www.skyscanner.ca/transport/flights/yul/{code_dest}/"
-        f"{depart_sky}/{retour_sky}/?adults=1&currency=CAD&locale=fr-CA&market=CA"
-    ) if code_dest else deal_info.get("lien_reservation", "#")
+        f"https://www.aviasales.com/search/YUL{depart_sky[6:8]}{depart_sky[4:6]}"
+        f"{code_dest.upper()}{retour_sky[6:8]}{retour_sky[4:6]}1?marker={TP_MARKER}"
+    ) if code_dest else f"https://www.aviasales.com/?origin_iata=YUL&marker={TP_MARKER}"
     type_ = deal_info.get("type_deal", "promo")
     norm = deal_info.get("prix_normal_estime", "")
     pays = deal_info.get("pays", "")
