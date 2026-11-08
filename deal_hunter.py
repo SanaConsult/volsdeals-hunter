@@ -226,6 +226,10 @@ def analyser_deal(deal, client):
               '  "duree_validite": "quelques heures",\n'
               '  "score_urgence": 9,\n'
               '  "lien_reservation": "https://...",\n'
+              '  "date_depart": "2027-01-15",\n'
+              '  "date_retour": "2027-01-31",\n'
+              '  "compagnie": "TAP Air Portugal",\n'
+              '  "escales": 1,\n'
               '  "raison_rejet": ""\n'
               '}\n\n'
               "Regles IMPORTANTES:\n"
@@ -236,6 +240,8 @@ def analyser_deal(deal, client):
               "- ville_destination: nom de la ville en francais\n"
               "- Si prix en USD: mets devise=USD (on convertira en CAD)\n"
               "- type_deal: erreur_tarifaire / promo_flash / routage_creatif / reduction_saison / miles_points\n"
+              "- date_depart / date_retour: dates EXACTES (AAAA-MM-JJ) d un aller-retour mentionnees dans l article. Si l article ne donne que des mois ou des plages, choisis une paire de dates seulement si elle est explicitement citee, sinon mets null (ne jamais inventer)\n"
+              "- compagnie: compagnie aerienne si citee, sinon null; escales: nombre entier si cite, sinon null\n"
               "- score_urgence: 1-10\n"
               "- Si pas un deal de vol avec prix: contient_deal=false et raison_rejet explique")
     try:
@@ -516,6 +522,32 @@ def envoyer_alerte(deal_info, liste_emails):
             print(f"  Erreur envoi a {email}: {e}")
     print(f"  Emails envoyes: {ok}/{len(destinataires)} ({erreurs} erreur(s))")
 
+WP_INGEST_URL = os.environ.get("WP_INGEST_URL", "https://volsdeals.com/wp-json/vd/v1/ingest")
+
+def envoyer_au_site(deals):
+    """Envoie les deals (avec dates exactes) au site WordPress, qui gere liens, expiration et courriels."""
+    import hmac, hashlib
+    payload = []
+    for d in deals:
+        dep, ret = d.get("date_depart"), d.get("date_retour")
+        if not (isinstance(dep, str) and isinstance(ret, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", dep) and re.match(r"^\d{4}-\d{2}-\d{2}$", ret)):
+            print(f"  Pas de dates exactes pour {d.get('ville_destination')} -> non publie (pas de lien fiable)")
+            continue
+        payload.append({
+            "iata": (d.get("code_destination") or "").upper(),
+            "price": int(round(float(d.get("prix_deal_cad", d.get("prix_deal", 0))))),
+            "dep": dep, "ret": ret,
+            "airline": d.get("compagnie") or "",
+            "stops": d.get("escales") if isinstance(d.get("escales"), int) else None,
+            "url": d.get("lien_reservation") or "",
+        })
+    if not payload:
+        return
+    body = json.dumps({"deals": payload}, ensure_ascii=False).encode("utf-8")
+    sig = hmac.new(BREVO_API_KEY.encode(), body, hashlib.sha256).hexdigest()
+    r = requests.post(WP_INGEST_URL, data=body, headers={"Content-Type": "application/json", "X-VD-Sig": sig}, timeout=30)
+    print(f"  Envoi au site: HTTP {r.status_code} {r.text[:300]}")
+
 def get_abonnes():
     """Retourne {email: set de groupes | None}. None = aucune preference = tous les deals."""
     abonnes = {}
@@ -572,18 +604,9 @@ def main():
         meilleur = deals_valides[0]
         prix_affiche = meilleur.get("prix_deal_cad", meilleur.get("prix_deal"))
         print(f"Meilleur deal : YUL -> {meilleur.get('ville_destination')} a {prix_affiche}$ CAD")
-        # Mettre a jour le site avec tous les deals trouves
-        print("\nMise a jour du site web...")
-        mettre_a_jour_site(deals_valides)
-        # Envoyer l alerte email
-        abonnes = get_abonnes()
-        if not abonnes:
-            destinataires = [TON_EMAIL]
-            print(f"  Aucun abonne, envoi a {TON_EMAIL} uniquement")
-        else:
-            destinataires = destinataires_pour(meilleur, abonnes)
-            print(f"  {len(abonnes)} abonne(s), {len(destinataires)} destinataire(s) pour ce deal")
-        envoyer_alerte(meilleur, destinataires)
+        # Le site WordPress gere maintenant verification, expiration et alertes courriel
+        print("\nEnvoi des deals au site...")
+        envoyer_au_site(deals_valides)
     else:
         print("Aucun deal exceptionnel aujourd hui. On surveille...")
 
